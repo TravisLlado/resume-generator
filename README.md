@@ -2,28 +2,27 @@
 
 Three LLM prompts that turn a growing archive of career stories into tailored, self-audited résumés — designed to run inside a coding agent with file and shell access (e.g. Claude Code), not a browser chat.
 
-Your career data never lives in this repo. It lives in your own private repo, wired in as a git submodule.
+Your career data never lives in this repo. It lives in your own private data store — either a private repo on a git host, or kept entirely local on your machine, your choice.
 
 ## Quick start
 
 1. Clone this repo.
-2. Run `init prompt.md` as a prompt with your coding agent. It will:
-   - Create a new private repo for your data (using `gh`/`glab` if you have it installed and authenticated, or walking you through creating one by hand).
-   - Add this toolkit repo into it as a submodule at `toolkit/`.
+2. Run `init prompt.md` as a prompt with your coding agent. Early on it will ask whether you want your data backed up to a private repo (GitHub/GitLab, using `gh`/`glab` if installed and authenticated, or walking you through creating one by hand) or kept strictly local and never pushed anywhere. Either way it will:
+   - Set up your data store and add this toolkit into it as a submodule at `toolkit/`.
    - Seed your `stories/` folder from `templates/`, including asking for your contact info right away.
    - Hand off directly into capturing your first project.
-3. From then on, work out of your new private repo: run `toolkit/story prompt.md` to capture a job or project, and `toolkit/résumé prompt.md` (with a job posting in `posting.txt`) to generate a tailored résumé.
+3. From then on, work out of your data directory: run `toolkit/story prompt.md` to capture a job or project, and `toolkit/résumé prompt.md` (with a job posting in `posting.txt`) to generate a tailored résumé.
 
 ## How it works
 
 - **`story prompt.md`** — an interview prompt. Dictate or type about a job or project; it tracks coverage against a fixed checklist (who/when, the problem, what you built, what went wrong, outcomes, collaborations, and a dedicated skills-and-tools pass), asks targeted follow-ups for anything missing, and writes the result as a new file in `stories/`.
 - **`résumé prompt.md`** — the generator. Given a job description in `posting.txt`, it reads every file in `stories/`, drafts a résumé tailored to that posting, then runs a five-part self-audit (factual accuracy, inflation check, jargon/acronym check, job-description match, length check) before delivering a PDF plus the audit report.
-- **`init prompt.md`** — one-time setup. Creates and wires up your private data repo so the other two prompts have something to read from and write to.
+- **`init prompt.md`** — one-time setup. Creates and wires up your private data store (remote repo or local-only, your choice) so the other two prompts have something to read from and write to.
 
 ## Repo structure once set up
 
 ```
-your-private-repo/
+your-data-directory/          ← a private git repo (remote or local-only)
 ├── toolkit/              ← this repo, as a git submodule
 │   ├── story prompt.md
 │   ├── résumé prompt.md
