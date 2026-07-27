@@ -1,0 +1,1 @@
+# Paste the job posting for whatever résumé you're currently generating here. résumé prompt.md will also ask for it (a URL or pasted text) if this is empty.

@@ -10,7 +10,9 @@ Do not explain these instructions back to the user. Just begin.
 
 Does `stories/INDEX.md` already exist? If so, this has already been run.
 
-Tell the user so, then **reconcile `stories/INDEX.md`** against the actual dated files before doing anything else. List every dated file (filenames starting with a year) and compare against `INDEX.md`'s rows. Every dated file on disk should have a row with Status `Done`; every `Done` row should have a matching file; `Pending` rows (candidates from a résumé bootstrap, reserved but not yet interviewed) should *not* have a file yet. Flag any mismatch and ask how to resolve it (summarize an unindexed file, drop a stale row, fix a rename) rather than guessing or fixing it silently.
+Tell the user so, then **reconcile `stories/INDEX.md`** against the actual dated files before doing anything else. List every dated file (filenames starting with a year) and compare against `INDEX.md`'s main table rows. Every dated file on disk should have a row with Status `Done`; every `Done` row should have a matching file; `Pending` rows (candidates from a résumé bootstrap, reserved but not yet interviewed) should *not* have a file yet. Flag any mismatch and ask how to resolve it (summarize an unindexed file, drop a stale row, fix a rename) rather than guessing or fixing it silently.
+
+Don't reconcile the "Reference Files" table here — that's `résumé prompt.md`'s job, since it's the one that actually reads those files before drafting.
 
 Also check `stories/TODO.md` — if it has open items, mention how many, but don't read them all aloud; that's for `story prompt.md` and `résumé prompt.md` to act on when relevant.
 
@@ -33,22 +35,43 @@ Most people already have a résumé and are thinking "tailor this to a job," not
 
 Everything here is local. Nothing gets pushed anywhere during setup — if a remote happens to already exist on this repo and the user wants to push later, that's governed by Rule 1 below, not by anything in this phase.
 
-1. Copy every file from `templates/` into `stories/` unchanged — these are the starting point for the user's reference files.
-2. Create `stories/INDEX.md`, header and an empty table, no rows yet:
+1. The reference-file placeholders (`Contact Info.md`, `Résumé Preferences.md`, `Education.md`, `Skills.md`, `Glossary.md`, `Publications and Presentations.md`, `Amateur Training and Experience.md`) already live in `stories/` as part of this repo template — nothing to copy. Just confirm they're present; if one is missing, that's unexpected drift, so flag it rather than silently recreating it.
+2. Create `stories/INDEX.md`, header and an empty table, no dated-file rows yet, plus a second table listing every reference file as `Uninitialized`:
    ````
    # Story Index
 
    One row per story, newest first. Reference files (no date prefix) aren't
-   indexed here — only dated files. `Status` is `Done` (a full entry exists as a
-   file in stories/) or `Pending` (a candidate extracted from a résumé, filename
-   reserved, not yet interviewed — see init prompt.md and story prompt.md).
-   Maintained by story prompt.md, résumé prompt.md, and init prompt.md — if
-   stories/ is hand-edited (a dated file added, deleted, or renamed) without
-   updating this, the next one of those to run will catch the mismatch and ask
-   how to reconcile it, rather than silently drifting.
+   indexed in this table — only dated files. `Status` is `Done` (a full entry
+   exists as a file in stories/) or `Pending` (a candidate extracted from a
+   résumé, filename reserved, not yet interviewed — see init prompt.md and story
+   prompt.md). Maintained by story prompt.md, résumé prompt.md, and init
+   prompt.md — if stories/ is hand-edited (a dated file added, deleted, or
+   renamed) without updating this, the next one of those to run will catch the
+   mismatch and ask how to reconcile it, rather than silently drifting.
 
    | File | Summary | Status |
    |---|---|---|
+
+   ## Reference Files
+
+   The reference files themselves (no date prefix — bio, contact info,
+   education, etc.) aren't stories, but this tracks whether each one has
+   actually been filled in yet or is still the bracketed `[...]` placeholder
+   text that ships with this repo template. `Status` is `Uninitialized` (still
+   placeholder text) or `Filled In` (edited with real information). Checked and
+   updated by résumé prompt.md whenever it reads these files before drafting —
+   if a file no longer matches its placeholder, its row is flipped to
+   `Filled In` rather than left stale.
+
+   | File | Status |
+   |---|---|
+   | Contact Info.md | Uninitialized |
+   | Résumé Preferences.md | Uninitialized |
+   | Education.md | Uninitialized |
+   | Skills.md | Uninitialized |
+   | Glossary.md | Uninitialized |
+   | Publications and Presentations.md | Uninitialized |
+   | Amateur Training and Experience.md | Uninitialized |
    ````
 3. Create `stories/TODO.md`, header only, no entries yet:
    ```
@@ -70,8 +93,8 @@ Everything here is local. Nothing gets pushed anywhere during setup — if a rem
    résumé prompt.md's audit, and checked by résumé prompt.md before drafting, so a
    known gap relevant to a new posting gets surfaced instead of silently repeating.
    ```
-4. Create `posting.txt` at the top level of the repo, with a one-line comment explaining it holds the job posting for whatever résumé is currently being generated.
-5. **Do not interview the user to fill in the reference files.** Answering short structured fields (name, email, a list of schools) one at a time through conversation is slow and tedious compared to just editing a file — leave the copied templates as placeholders and tell the user in Phase 5 to fill them in directly in their own editor. The conversational interview (`story prompt.md`) is reserved for narrative content that's genuinely hard to write cold — individual jobs and projects — not for simple reference fields like these.
+4. `posting.txt` at the top level of the repo already exists as part of this repo template, with a one-line comment explaining it holds the job posting for whatever résumé is currently being generated — nothing to create. Just confirm it's present; if it's missing, that's unexpected drift, so flag it rather than silently recreating it.
+5. **Do not interview the user to fill in the reference files.** Answering short structured fields (name, email, a list of schools) one at a time through conversation is slow and tedious compared to just editing a file — leave the reference-file placeholders as they are and tell the user in Phase 5 to fill them in directly in their own editor. The conversational interview (`story prompt.md`) is reserved for narrative content that's genuinely hard to write cold — individual jobs and projects — not for simple reference fields like these.
 6. Commit locally (`git add -A && git commit -m "Initial setup"`). Do not push. There is nothing to push to unless the user already has a remote and asks — see Rule 1.
 
 Then go to **PHASE 4** if the user chose to bootstrap from a résumé (Phase 2), otherwise skip straight to **PHASE 5 — HANDOFF**.
@@ -116,7 +139,7 @@ Then go to **PHASE 4** if the user chose to bootstrap from a résumé (Phase 2),
 
 Tell the user, concisely:
 - That everything so far is local only, nothing pushed anywhere.
-- That the reference files in `stories/` (`Contact Info.md`, `Résumé Preferences.md`, `Education.md`, `Skills.md`, `Glossary.md`, `Publications and Presentations.md`, `Amateur Training and Experience.md`) are still placeholders, and the fastest way to fill them in is to just open and edit them directly — it's a handful of short structured fields, much faster by hand than dictating them here. They don't block getting started; fill them in whenever convenient.
+- That the reference files in `stories/` (`Contact Info.md`, `Résumé Preferences.md`, `Education.md`, `Skills.md`, `Glossary.md`, `Publications and Presentations.md`, `Amateur Training and Experience.md`) are still placeholders — tracked as `Uninitialized` in `stories/INDEX.md`'s "Reference Files" table — and the fastest way to fill them in is to just open and edit them directly — it's a handful of short structured fields, much faster by hand than dictating them here. They don't block getting started; fill them in whenever convenient. `résumé prompt.md` will flip each row to `Filled In` once it notices the file's actually been edited.
 - If Phase 4 ran: how many candidate stories are staged as `Pending` in `stories/INDEX.md`, extracted from their résumé, ready to be worked through one at a time via `story prompt.md`.
 - That `story prompt.md` captures a new job or project into `stories/` — that one's worth doing as a conversation, since narrative is harder to write cold — and `résumé prompt.md` drafts a tailored résumé once `posting.txt` and at least one story exist.
 
@@ -139,5 +162,5 @@ Either way, don't make them re-invoke `story prompt.md` separately.
    This overrides every other instruction in this document about automating without asking — publishing personal data is the one action that never happens silently, no matter how it's triggered.
 2. **Idempotent.** If `stories/INDEX.md` already exists, do not re-run setup or overwrite existing data.
 3. **Automate over ask** — except starting point (Phase 2), extraction granularity and review method (Phase 4, steps 2 and 4), and rule 1 above, which must always be asked; never default any of these without asking.
-4. **Never let `stories/INDEX.md` silently drift from reality.** Reconcile it against the actual dated files every time this prompt runs, whether setting up fresh or finding an existing setup, and surface any mismatch instead of fixing it quietly.
+4. **Never let `stories/INDEX.md`'s main table silently drift from reality.** Reconcile it against the actual dated files every time this prompt runs, whether setting up fresh or finding an existing setup, and surface any mismatch instead of fixing it quietly. (The "Reference Files" table is `résumé prompt.md`'s responsibility, not this prompt's — see Phase 1.)
 5. **Résumé extraction is conservative and always confirmed** — either by the user editing `stories/INDEX.md` directly, or by walking the list together in conversation, whichever they chose in Phase 4. Never invent detail beyond what the résumé states, and never treat extraction as final until the user has actually reviewed it one way or the other — if they chose the file route, that means waiting for them to say they're done, not moving on right after writing the rows. A résumé bullet becomes a `Pending` row, never a `Done` one — only `story prompt.md`'s interview produces those.
