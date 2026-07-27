@@ -97,11 +97,18 @@ Then go to **PHASE 4** if the user chose to bootstrap from a résumé (Phase 2),
    - Approximate date, matching whatever precision the résumé gives (year, or year-month)
    - A few-word summary, drawn directly from the résumé's own language where possible
 
-4. **Show the candidate list to the user before writing anything** — employer/role, date, summary, nothing more. Ask them to confirm, or adjust (split, merge, drop, re-date) before proceeding. Don't skip this step — extraction and splitting judgment calls are exactly the kind of thing worth a human check before they're locked in.
+4. **Ask how they'd like to review the extracted list before it's locked in:**
 
-5. **Add the confirmed candidates to `stories/INDEX.md`** as new rows with Status `Pending`, using the same filename convention as everywhere else (`YYYY-MM Employer ProjectName.md` / `YYYY ProjectName.md`) for each candidate's eventual filename — this reserves the name so `story prompt.md` knows exactly which file to create when it works through this entry.
+   > I've got N candidates. Want me to write them straight into `stories/INDEX.md` as `Pending` rows so you can review and edit them yourself — split, merge, drop, re-date, rename, whatever — then just tell me when you're done? Or would you rather go through the list together here in the conversation first?
 
-6. **Do not create the dated story files yet.** A résumé bullet is not a complete story — the row stays `Pending` until `story prompt.md` interviews it into one and flips the status to `Done`.
+   Lead with the file option as the expected default — beyond a handful of candidates, a long list dumped into the conversation tends to come out formatted inconsistently and is tedious to correct through back-and-forth chat, where a plain markdown table is fast to edit directly by hand. But it's a genuine choice; some people would rather talk it through. Ask once, don't push, go with whichever they pick.
+
+5. **Write the candidates in, using the path they chose:**
+
+   - **File review (expected default).** Write every extracted candidate directly into `stories/INDEX.md` as a `Pending` row — no list shown in the conversation first. Use the same filename convention as everywhere else (`YYYY-MM Employer ProjectName.md` / `YYYY ProjectName.md`) to reserve each candidate's eventual filename. Commit locally (`git commit -m "Stage N candidate stories from résumé"`). Then tell the user, concisely: how many rows were added, and to open `stories/INDEX.md` directly in their editor to review it — add, remove, split, merge, re-date, rename, or reword summaries, whatever they want, since it's just a markdown table. Ask them to say when they're done (or "looks good" if no changes are needed). **Stop and wait for that response before continuing to Phase 5** — do not proceed on your own. When they return, re-read `stories/INDEX.md` to pick up whatever they actually changed; don't assume your original extraction is still what's there.
+   - **Conversation review.** Show the candidate list in the conversation — employer/role, date, summary, nothing more. Ask them to confirm, or adjust (split, merge, drop, re-date) before proceeding. Once confirmed, add the candidates to `stories/INDEX.md` as `Pending` rows using the same filename convention, and commit locally.
+
+6. **Do not create the dated story files yet**, either way. A résumé bullet is not a complete story — the row stays `Pending` until `story prompt.md` interviews it into one and flips the status to `Done`.
 
 ---
 
@@ -131,6 +138,6 @@ Either way, don't make them re-invoke `story prompt.md` separately.
 
    This overrides every other instruction in this document about automating without asking — publishing personal data is the one action that never happens silently, no matter how it's triggered.
 2. **Idempotent.** If `stories/INDEX.md` already exists, do not re-run setup or overwrite existing data.
-3. **Automate over ask** — except starting point (Phase 2) and rule 1 above, which must always be asked; never default either without asking.
+3. **Automate over ask** — except starting point (Phase 2), extraction granularity and review method (Phase 4, steps 2 and 4), and rule 1 above, which must always be asked; never default any of these without asking.
 4. **Never let `stories/INDEX.md` silently drift from reality.** Reconcile it against the actual dated files every time this prompt runs, whether setting up fresh or finding an existing setup, and surface any mismatch instead of fixing it quietly.
-5. **Résumé extraction is conservative and always confirmed.** Never invent detail beyond what the résumé states, and never add rows to `INDEX.md` without showing the candidate list to the user first. A résumé bullet becomes a `Pending` row, never a `Done` one — only `story prompt.md`'s interview produces those.
+5. **Résumé extraction is conservative and always confirmed** — either by the user editing `stories/INDEX.md` directly, or by walking the list together in conversation, whichever they chose in Phase 4. Never invent detail beyond what the résumé states, and never treat extraction as final until the user has actually reviewed it one way or the other — if they chose the file route, that means waiting for them to say they're done, not moving on right after writing the rows. A résumé bullet becomes a `Pending` row, never a `Done` one — only `story prompt.md`'s interview produces those.
