@@ -2,7 +2,7 @@
 
 Three LLM prompts that turn a growing archive of career stories into tailored, self-audited résumés — designed to run inside a coding agent with file and shell access (e.g. Claude Code), not a browser chat.
 
-Your career data lives in `stories/`, inside this same clone — a completely separate git repository (its own remote if you want backup, or just local), never a submodule of this one and never part of this clone's own commit history. That's a deliberate choice, not an accident: see "A note on how `stories/` is wired in" below.
+This repo is a template. Make your own private copy of it (GitHub's "Use this template" button, or `gh repo create --template`), and your career data lives right alongside the prompts in that copy — no second repo, no submodule, nothing to wire together. The only thing that has to stay disciplined is never pushing that copy anywhere public; see "A note on git safety" below.
 
 ## Process overview
 
@@ -15,29 +15,29 @@ The two steps are independent. You don't touch `stories/` again just to apply so
 
 ## Quick start
 
-1. Clone this repo.
-2. Run `init prompt.md` as a prompt with your coding agent. Early on it will ask two things: whether you want your data backed up to a private repo (GitHub/GitLab, using `gh`/`glab` if installed and authenticated, or walking you through creating one by hand) or kept strictly local and never pushed anywhere; and whether you already have a résumé to build from or want to start from scratch — most people have one, so lead with that expectation, but it still asks. Either way it will:
-   - Set up `stories/` right here in this clone, as its own independent git repo, with a safety net so it can never accidentally get pushed to this repo's public origin.
-   - Seed `stories/` from `templates/` — you fill these in yourself afterward, directly in your editor; it's a handful of short fields and much faster by hand than dictating them.
-   - If you have a résumé: extract a candidate story per role/project from it (conservatively — no invented detail, and it confirms the list with you before writing anything), and stage them in `stories/PENDING.md` for `story prompt.md` to interview into full entries one at a time.
+1. Make your own private copy of this repo — GitHub's "Use this template" button is the easiest way (creates a fresh history, no shared commits with this repo). Clone it.
+2. Run `init prompt.md` as a prompt with your coding agent. It will ask whether you already have a résumé to build from or want to start from scratch — most people have one, so lead with that expectation, but it still asks. Either way it will:
+   - Set up `stories/` right here in your copy — `INDEX.md`, `TODO.md`, the reference-file templates, `posting.txt` — as ordinary files, committed locally. Nothing gets pushed anywhere during setup.
+   - Seed the reference files from `templates/` — you fill these in yourself afterward, directly in your editor; it's a handful of short fields and much faster by hand than dictating them.
+   - If you have a résumé: extract a candidate story per role/project from it (conservatively — no invented detail, and it confirms the list with you before writing anything), and stage them as `Pending` rows in `stories/INDEX.md` for `story prompt.md` to interview into full entries one at a time.
    - Hand off directly into capturing your first project — starting from a staged candidate if you bootstrapped, cold otherwise.
-3. From then on, work out of this clone: run `story prompt.md` to capture a job or project, and `résumé prompt.md` (with a job posting in `posting.txt`) to generate a tailored résumé.
+3. From then on, work out of your copy: run `story prompt.md` to capture a job or project, and `résumé prompt.md` (with a job posting in `posting.txt`) to generate a tailored résumé. Push to a remote whenever you want backup — see the note on git safety below before you do.
 
 ## How it works
 
-- **`story prompt.md`** — an interview prompt. Dictate or type about a job or project; it tracks coverage against a fixed checklist (who/when, the problem, what you built, what went wrong, outcomes, collaborations, and a dedicated skills-and-tools pass), asks targeted follow-ups for anything missing, and writes the result as a new file in `stories/`. If `stories/PENDING.md` has staged candidates (from a résumé bootstrap), it offers to work through one of those first, using its summary as a starting point rather than an opening cold — but the same full checklist and audit still apply.
-- **`résumé prompt.md`** — the generator. Given a job description in `posting.txt`, it reads every file in `stories/`, drafts a résumé tailored to that posting, then runs a five-part self-audit (factual accuracy, inflation check, jargon/acronym check, job-description match, length check) before delivering a PDF plus the audit report.
-- **`init prompt.md`** — one-time setup. Creates `stories/` (remote-backed or local-only, your choice) so the other two prompts have something to read from and write to, optionally bootstraps a starting set of candidate stories from an existing résumé, and adds a local git safety net so your data can never leak to this repo's public origin.
+- **`story prompt.md`** — an interview prompt. Dictate or type about a job or project; it tracks coverage against a fixed checklist (who/when, the problem, what you built, what went wrong, outcomes, collaborations, and a dedicated skills-and-tools pass), asks targeted follow-ups for anything missing, and writes the result as a new file in `stories/`. If `stories/INDEX.md` has `Pending` rows (from a résumé bootstrap), it offers to work through one of those first, using its summary as a starting point rather than an opening cold — but the same full checklist and audit still apply. Unresolved issues (contradictions, undefined terms) get logged to `stories/TODO.md`, not just mentioned in conversation, since this process spans many sessions.
+- **`résumé prompt.md`** — the generator. Given a job description in `posting.txt`, it reconciles `stories/INDEX.md`, checks `stories/TODO.md` for known gaps relevant to this posting, reads every finished story, drafts a résumé tailored to that posting, then runs a five-part self-audit (factual accuracy, inflation check, jargon/acronym check, job-description match, length check) before delivering a PDF plus the audit report. Job-description gaps not covered by any story get logged to `TODO.md` too, so a requirement that keeps recurring across postings actually gets noticed.
+- **`init prompt.md`** — one-time setup. Creates `stories/`, `INDEX.md`, and `TODO.md` so the other two prompts have something to read from and write to, and optionally bootstraps a starting set of candidate stories from an existing résumé.
 
 ## Repo structure once set up
 
 ```
-resume-generator-toolkit/       ← this repo, cloned — origin remains the public repo
+your-private-copy/
 ├── story prompt.md
 ├── résumé prompt.md
 ├── init prompt.md
 ├── templates/
-├── stories/                     ← your career data — its own separate git repo
+├── stories/
 │   ├── 2022-01 Employer ProjectName.md   (dated: one per job/project)
 │   ├── Contact Info.md                    (reference: no date prefix)
 │   ├── Résumé Preferences.md
@@ -46,18 +46,16 @@ resume-generator-toolkit/       ← this repo, cloned — origin remains the pub
 │   ├── Glossary.md
 │   ├── Publications and Presentations.md
 │   ├── Amateur Training and Experience.md
-│   ├── INDEX.md                  ← one line per finished story, kept in sync automatically
-│   └── PENDING.md                ← candidates staged from a résumé, not yet interviewed
+│   ├── INDEX.md                  ← one row per story (File / Summary / Status), kept in sync automatically
+│   └── TODO.md                   ← running list of known gaps, not a full history
 └── posting.txt                  ← the job description you're currently targeting
 ```
 
-`stories/` and `posting.txt` are both listed in this clone's local `.git/info/exclude`, so they never show up in `git status` here and can't be accidentally staged or pushed to `origin` (the public repo). Your actual data commits happen inside `stories/` itself, against its own remote (if any) — never in this outer clone.
-
-### A note on how `stories/` is wired in
-
-The obvious way to nest one git repo inside another is a submodule. Don't do that here. A submodule requires a commit *in this clone's own history* to register it, and this clone's `main` is the branch that gets pushed to the public `origin`. There's no such thing as a commit that stays "local only" on a branch you keep pushing — the moment any later commit goes up, git sends the whole ancestor chain with it. `init prompt.md` instead sets `stories/` up as a plain, ordinary `git clone` (or `git init` for local-only) — a fully independent repo that this outer clone's git never tracks, commits, or knows about at all.
-
 `stories/Résumé Preferences.md` is where your personal positioning lives — your bio, your target level, and how you want your current title framed. `résumé prompt.md` is otherwise generic and has no opinion about who you are; it reads that file first and applies it throughout.
+
+## A note on git safety
+
+There's no structural trick here — `stories/` is a normal folder in a normal repo. The only thing standing between your career data and a public leak is discipline about `git push`. All three prompts carry the same standing rule: **never push to a remote without first checking its visibility, and never push to a public one without your explicit, informed confirmation** — no matter when you ask, not just during initial setup. If you make your private copy the recommended way ("Use this template," set to private) and don't manually flip it public later, this should never come up as anything but a quick, silent confirmation.
 
 ## Design principles
 

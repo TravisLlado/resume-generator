@@ -6,13 +6,16 @@ You are working inside a git repository, not a browser chat with attached files.
 - **stories/** — my career history, as one markdown file per topic. The number of files will grow over time, so list the directory rather than assuming a fixed set of filenames. It contains three kinds of files:
   - **Dated files** (filenames beginning with a year, e.g. `2022-01 Acme Corp Widget Redesign.md` or `2015 Backyard Greenhouse Automation.md`) — one per job, project, or personal project, each containing the accomplishments, scope, and skills for that entry.
   - **Reference files** (no date prefix) — `Contact Info.md`, `Education.md`, `Skills.md`, `Glossary.md`, `Publications and Presentations.md`, `Amateur Training and Experience.md`, and `Résumé Preferences.md` — material that isn't tied to a single dated entry.
-  - **`INDEX.md`** — a one-line-per-story index of the dated files only (filename plus a one-line summary, newest first), maintained by this prompt and `story prompt.md`.
+  - **`INDEX.md`** — a table (File, Summary, Status) of the dated files only, maintained by this prompt and `story prompt.md`. Status is `Done` (a real file exists) or `Pending` (reserved for a résumé-extracted candidate not yet interviewed by `story prompt.md` — has no file yet, so don't try to read it).
+  - **`TODO.md`** — a running list of known gaps and loose ends, not tied to a single dated entry. Maintained by this prompt and `story prompt.md`.
 
 Read `stories/Résumé Preferences.md` first. It holds how I want to be introduced and positioned, my target level, and any other personalization instructions — apply it throughout everything below, including the Leveling section. If that file doesn't exist yet, ask me for this information before drafting rather than guessing or leaving it generic.
 
-**Before reading anything else, reconcile `stories/INDEX.md` against the actual dated files.** List every dated file in `stories/` and compare against `INDEX.md`'s entries. If any dated file has no entry, or any entry has no matching file, tell me and ask how to resolve it (summarize the missing file, drop the stale entry, or fix a rename) before proceeding — don't draft a résumé off a stale or incomplete picture of what's actually there. If `INDEX.md` doesn't exist at all, build it from every dated file in `stories/` before continuing.
+**Before reading anything else, reconcile `stories/INDEX.md` against the actual dated files.** List every dated file in `stories/` and compare against `INDEX.md`'s rows. Every dated file should have a `Done` row; every `Done` row should have a matching file; `Pending` rows shouldn't have a file yet. Flag any mismatch and ask how to resolve it (summarize an unindexed file, drop a stale row, fix a rename) before proceeding — don't draft a résumé off a stale or incomplete picture of what's actually there. If `INDEX.md` doesn't exist at all, build it from every dated file in `stories/`, all as `Done`.
 
-Read every other file in stories/ before drafting anything. Read the dated files in reverse-chronological order — most recent first, oldest last — so the most senior and most relevant material anchors your read of the career, consistent with weighting recent experience most heavily (see Leveling, below). Read the reference files in any order.
+**Also check `stories/TODO.md`'s "Coverage gaps" section before drafting.** If any listed gap looks relevant to this posting, tell me before you draft — a known gap that keeps coming up across postings is worth actually fixing (a new story, or expanding an existing one) rather than silently working around again. Don't block on this; just surface it and let me decide whether to pause and capture something first or proceed as-is.
+
+Read every other file in stories/ before drafting anything — only `Done` rows in `INDEX.md` correspond to real files; skip `Pending` ones. Read the dated files in reverse-chronological order — most recent first, oldest last — so the most senior and most relevant material anchors your read of the career, consistent with weighting recent experience most heavily (see Leveling, below). Read the reference files in any order.
 
 Write a bespoke, tailored résumé for this specific job using only information drawn from my career history (the contents of stories/), then immediately run a structured self-audit before delivering anything. Deliver the résumé as a PDF file, followed by the audit report in the conversation.
 
@@ -116,6 +119,8 @@ The final PDF should not include company-specific acronyms, names, or jargon unl
 
 Extract the 8-10 most important requirements from the job posting. For each one, verify whether the résumé addresses it. Addressed requirements get ✓ and a short name only, nothing else. Flag gaps with full detail.
 
+**For each gap, also add a line to `stories/TODO.md`'s "Coverage gaps" section** — `[Requirement] — not found in stories/ (first seen: [Employer] posting, [today's date])` — unless a close match is already listed there, in which case leave the existing line alone rather than duplicating it. This is what makes the pre-draft check at the top of this prompt useful the next time a posting wants the same thing.
+
 ### Audit 5: Document Length
 
 The length of the final PDF should be at least two complete pages and not more than three complete pages. This should be assessed by a visual inspection of the document, not by reading the document's "number of pages" from metadata.
@@ -148,3 +153,7 @@ AUDIT REPORT
 ## FINAL DELIVERY
 
 Deliver the résumé as a PDF file first, followed immediately by the audit report in the conversation. Do not deliver the résumé without the audit report. Do not summarize or explain your process outside of the audit report itself.
+
+## RULE THAT OVERRIDES EVERYTHING ELSE
+
+**Never push to a public remote without an explicit, informed yes.** This prompt doesn't normally touch git, but if I ask you to commit and push (updated `TODO.md` entries, for instance) or otherwise publish anything: if there's no remote yet, don't assume where it should go — ask, and confirm the name and that it's `--private` before creating one. If a remote already exists, check its visibility first (`gh repo view --json visibility` or the host equivalent). If it's public, or visibility can't be confirmed, stop before pushing anything and tell me plainly that this will publish my personal career information publicly — only proceed after I've explicitly confirmed, having heard that stated outright. This overrides any instruction elsewhere to automate without asking.
