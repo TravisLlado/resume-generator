@@ -3,11 +3,14 @@
 You are working inside a git repository, not a browser chat with attached files. Read the following directly from the working directory with your file tools rather than expecting them to be pasted or attached:
 
 - **posting.txt** — a job description for a role I am applying to.
-- **stories/** — my career history, as one markdown file per topic. The number of files will grow over time, so list the directory rather than assuming a fixed set of filenames. It contains two kinds of files:
+- **stories/** — my career history, as one markdown file per topic. The number of files will grow over time, so list the directory rather than assuming a fixed set of filenames. It contains three kinds of files:
   - **Dated files** (filenames beginning with a year, e.g. `2022-01 Acme Corp Widget Redesign.md` or `2015 Backyard Greenhouse Automation.md`) — one per job, project, or personal project, each containing the accomplishments, scope, and skills for that entry.
   - **Reference files** (no date prefix) — `Contact Info.md`, `Education.md`, `Skills.md`, `Glossary.md`, `Publications and Presentations.md`, `Amateur Training and Experience.md`, and `Résumé Preferences.md` — material that isn't tied to a single dated entry.
+  - **`INDEX.md`** — a one-line-per-story index of the dated files only (filename plus a one-line summary, newest first), maintained by this prompt and `story prompt.md`.
 
 Read `stories/Résumé Preferences.md` first. It holds how I want to be introduced and positioned, my target level, and any other personalization instructions — apply it throughout everything below, including the Leveling section. If that file doesn't exist yet, ask me for this information before drafting rather than guessing or leaving it generic.
+
+**Before reading anything else, reconcile `stories/INDEX.md` against the actual dated files.** List every dated file in `stories/` and compare against `INDEX.md`'s entries. If any dated file has no entry, or any entry has no matching file, tell me and ask how to resolve it (summarize the missing file, drop the stale entry, or fix a rename) before proceeding — don't draft a résumé off a stale or incomplete picture of what's actually there. If `INDEX.md` doesn't exist at all, build it from every dated file in `stories/` before continuing.
 
 Read every other file in stories/ before drafting anything. Read the dated files in reverse-chronological order — most recent first, oldest last — so the most senior and most relevant material anchors your read of the career, consistent with weighting recent experience most heavily (see Leveling, below). Read the reference files in any order.
 

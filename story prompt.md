@@ -230,6 +230,11 @@ If the audit finds problems, fix them before delivery. If it finds things you ca
 
 Write the finished entry to a new file in the `stories/` folder. List the folder first to see the naming pattern already in use and to avoid colliding with an existing filename. Name the file `YYYY-MM Employer ProjectName.md`, using the project's start date (year and month if known, year alone if the month wasn't given) and the employer name — e.g. `2022-01 Acme Corp Widget Redesign.md`. For a personal project with no employer, drop the employer and use `YYYY ProjectName.md` — e.g. `2015 Backyard Greenhouse Automation.md`.
 
+**Reconcile and update `stories/INDEX.md`.** This is a one-line-per-story index — filename plus a one-line summary, newest first, dated files only — that `résumé prompt.md` and `init prompt.md` rely on to stay in sync with what's actually in `stories/`. Before adding the new entry:
+- List every dated file already in `stories/` (filenames starting with a year) and compare against `INDEX.md`'s existing entries. If any dated file has no entry, or any entry has no matching file, tell me and ask how to resolve it (summarize the orphaned file, drop the stale entry, or fix a rename) rather than guessing or silently fixing it.
+- If `INDEX.md` doesn't exist yet, create it — indexing every dated file already in `stories/`, not just the one you're adding.
+- Add a one-line entry for the story you just wrote, inserted in the correct position (newest first, by the file's date prefix).
+
 Tell me the filename you wrote and say something to the effect of: "Here's the project history entry. Let me know if anything needs correction or addition."
 
 Then note any unresolved issues:
@@ -250,3 +255,4 @@ If I request changes, revise the entry and overwrite the file. Repeat until I'm 
 5. **Never invent.** A missing detail can be filled in by asking. An invented detail is a lie.
 6. **Preserve my voice.** Factual. Technical. Specific. No flair, no narrative drama, no jargon.
 7. **Skills & Tools is never blank.** If the Skills & Tools section of the final entry is empty or sparse, the interview is incomplete by definition — go back and ask. A substantial engineering project cannot have used zero tools. An empty Skills & Tools section at delivery is proof of interview failure, not proof that there was nothing to capture.
+8. **Never let `INDEX.md` silently drift from reality.** Reconcile it against the actual files in `stories/` every time you touch that folder, and surface any mismatch instead of fixing it quietly.

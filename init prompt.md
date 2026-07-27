@@ -10,7 +10,7 @@ Do not explain these instructions back to the user. Just begin.
 
 Before doing anything else, check whether this has already been run: does `stories/` already exist in the current directory with more than just placeholder templates in it (i.e. more than the 7 files in `templates/`)?
 
-If it's already set up, tell the user so, confirm where the data lives (a remote-backed clone, or local-only), and skip straight to **PHASE 6 — HANDOFF**. Do not re-run setup or overwrite existing data.
+If it's already set up: tell the user so, confirm where the data lives (a remote-backed clone, or local-only), then **reconcile `stories/INDEX.md`** against the actual dated files before doing anything else. List every dated file (filenames starting with a year) and compare against `INDEX.md`'s entries. Flag any dated file with no entry, or any entry with no matching file, and ask the user how to resolve it (summarize the orphaned file, drop the stale entry, fix a rename) rather than guessing or fixing it silently. If `INDEX.md` doesn't exist at all, build it from every dated file present. Once reconciled, skip straight to **PHASE 6 — HANDOFF**. Do not otherwise re-run setup or overwrite existing data.
 
 Also sanity-check you're actually inside a real clone of this repo: `story prompt.md`, `résumé prompt.md`, and `templates/` should all be present alongside this file. If not, stop and tell the user something is wrong.
 
@@ -103,9 +103,20 @@ Same idea, just with no remote. A nested repo gives you local commit history eve
 **Then, either way:**
 
 1. Copy every file from `templates/` into `stories/` unchanged — these are the starting point for the user's reference files.
-2. Create `posting.txt` at the top level of this clone, with a one-line comment explaining it holds the job posting for whatever résumé is currently being generated.
-3. **Do not interview the user to fill these in.** Answering short structured fields (name, email, a list of schools) one at a time through conversation is slow and tedious compared to just editing a file — leave the copied templates as placeholders and tell the user in Phase 6 to fill them in directly in their own editor. The conversational interview (`story prompt.md`) is reserved for narrative content that's genuinely hard to write cold — individual jobs and projects — not for simple reference fields like these.
-4. Commit inside `stories/` itself (`cd stories && git add -A && git commit -m "Initial setup"`). If remote, also push it and set upstream tracking. This is the only place data commits happen — the outer clone's own history is never touched by any of this.
+2. Create `stories/INDEX.md`, header only, no entries yet — a fresh setup has no dated files:
+   ```
+   # Story Index
+
+   One line per dated file in stories/, newest first: `- \`filename.md\` — one-line summary`.
+   Reference files (no date prefix) aren't indexed here. Maintained by story prompt.md,
+   résumé prompt.md, and init prompt.md — if stories/ is hand-edited (a dated file added,
+   deleted, or renamed) without updating this, the next one of those to run will catch the
+   mismatch and ask how to reconcile it, rather than silently drifting.
+   ```
+   `story prompt.md` and `résumé prompt.md` maintain and reconcile it against the actual files every time they touch `stories/`.
+3. Create `posting.txt` at the top level of this clone, with a one-line comment explaining it holds the job posting for whatever résumé is currently being generated.
+4. **Do not interview the user to fill in the reference files.** Answering short structured fields (name, email, a list of schools) one at a time through conversation is slow and tedious compared to just editing a file — leave the copied templates as placeholders and tell the user in Phase 6 to fill them in directly in their own editor. The conversational interview (`story prompt.md`) is reserved for narrative content that's genuinely hard to write cold — individual jobs and projects — not for simple reference fields like these.
+5. Commit inside `stories/` itself (`cd stories && git add -A && git commit -m "Initial setup"`). If remote, also push it and set upstream tracking. This is the only place data commits happen — the outer clone's own history is never touched by any of this.
 
 ---
 
@@ -128,3 +139,4 @@ Then ask if they'd like to capture their first project right now. If yes, procee
 3. **Never push to `origin`.** `origin` is the public toolkit repo. Pull from it for updates. The only pushes this process ever makes are to the user's own private stories repo, if they chose remote — a completely separate `git push` in a completely separate repo.
 4. **Automate over ask** — except storage mode (Phase 2), which must always be asked; never default to remote and never default to local-only without asking.
 5. **Confirm before creating remote resources.** Before running `gh repo create` (or the manual equivalent), state what you're about to create — name, visibility, host — in one line. If the user chose local-only, no remote resource is ever created — don't create one "just in case."
+6. **Never let `stories/INDEX.md` silently drift from reality.** Reconcile it against the actual dated files every time this prompt runs, whether setting up fresh or finding an existing setup, and surface any mismatch instead of fixing it quietly.
