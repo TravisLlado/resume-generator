@@ -79,13 +79,13 @@ stories/
 posting.txt
 ```
 
-This makes both invisible to `git status`/`git add -A` in this outer clone no matter what. (A `git submodule add` for `stories/` below still works fine despite the exclude — explicit adds override ignore rules for that exact path — and submodules are safe by nature anyway, since `git add` on a submodule only ever stages a commit pointer, never its file contents. The exclude entry is what makes the **local-only** case safe, where `stories/` is just a plain folder of real files that would otherwise be trackable.)
+This makes both invisible to `git status`/`git add -A` in this outer clone no matter what. Because of the exclude, adding `stories/` as a submodule below requires `-f` (git refuses to add an ignored path otherwise — this is expected, not an error) — that's fine and intentional; submodules are safe by nature regardless, since `git add` on a submodule only ever stages a commit pointer, never its file contents. The exclude entry is what makes the **local-only** case safe, where `stories/` is just a plain folder of real files that would otherwise be trackable.
 
 **If remote (Phase 4 created a repo):**
 
 ```
-git submodule add <stories-repo-url> stories
-git add .gitmodules stories
+git submodule add -f <stories-repo-url> stories
+git add -f .gitmodules stories
 git commit -m "Add private stories submodule"
 ```
 
