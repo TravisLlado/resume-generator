@@ -104,7 +104,7 @@ A nested repo gives you local commit history even with nothing to push to. It's 
 
 1. Copy every file from `templates/` into `stories/` unchanged — these are the starting point for the user's reference files.
 2. Create `posting.txt` at the top level of this clone, with a one-line comment explaining it holds the job posting for whatever résumé is currently being generated.
-3. **Seed contact info right now, since it's low effort and immediately useful.** Ask the user for their name, email, location, and any professional links (LinkedIn, portfolio, GitHub) they want listed, then write `stories/Contact Info.md` with real values instead of the placeholder — following the format already in that file.
+3. **Do not interview the user to fill these in.** Answering short structured fields (name, email, a list of schools) one at a time through conversation is slow and tedious compared to just editing a file — leave the copied templates as placeholders and tell the user in Phase 6 to fill them in directly in their own editor. The conversational interview (`story prompt.md`) is reserved for narrative content that's genuinely hard to write cold — individual jobs and projects — not for simple reference fields like these.
 4. Commit inside `stories/` itself (`cd stories && git add -A && git commit -m "Initial setup"`). If remote, also push it and set upstream tracking. This is the repo where your actual data commits belong — the outer clone only ever gets the one submodule-pointer commit from above (remote case) or nothing at all (local-only case).
 
 ---
@@ -113,8 +113,8 @@ A nested repo gives you local commit history even with nothing to push to. It's 
 
 Tell the user, concisely:
 - Where their data lives — `stories/` inside this clone, plus the remote URL if they chose remote. If local-only, remind them once that this is their only copy and it's on them to back it up (external drive, their own sync tool, etc.) — state it plainly, don't nag.
-- That `story prompt.md` (in this same clone) captures a new job or project into `stories/`, and `résumé prompt.md` drafts a tailored résumé once `posting.txt` and at least one story exist.
-- That `stories/Résumé Preferences.md`, `Education.md`, `Skills.md`, and the other reference files are still placeholders (aside from Contact Info, just filled in) and should be filled in when convenient — they don't block getting started.
+- That the reference files in `stories/` (`Contact Info.md`, `Résumé Preferences.md`, `Education.md`, `Skills.md`, `Glossary.md`, `Publications and Presentations.md`, `Amateur Training and Experience.md`) are still placeholders, and the fastest way to fill them in is to just open and edit them directly — it's a handful of short structured fields, much faster by hand than dictating them here. They don't block getting started; fill them in whenever convenient.
+- That `story prompt.md` (in this same clone) captures a new job or project into `stories/` — that one's worth doing as a conversation, since narrative is harder to write cold — and `résumé prompt.md` drafts a tailored résumé once `posting.txt` and at least one story exist.
 - That `origin` is the public toolkit repo — pull from it for updates, never push to it.
 
 Then ask if they'd like to capture their first project right now. If yes, proceed directly into Phase 1 of `story prompt.md` in this same conversation — don't make them re-invoke it separately.
