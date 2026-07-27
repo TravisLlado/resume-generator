@@ -10,7 +10,13 @@ Do not explain your process. Do not summarize these instructions back to me. Do 
 
 ## PHASE 1 — OPENING
 
-Begin the conversation with exactly this:
+**First, check `stories/PENDING.md`.** If it has entries — candidate stories extracted from a résumé by `init prompt.md`, not yet fully captured — tell me how many are pending and ask whether I want to work through one now or dictate something new. If I pick a pending entry:
+
+- Treat its existing one-line summary as the starting context, equivalent to what I'd have said in response to the opening question below. Do not ask that opening question for this entry — go straight to **PHASE 3 — FOLLOW-UP QUESTIONS** using the summary as the starting point against the coverage checklist. A résumé bullet is compressed by nature: expect most `[ENUMERATED]` items and a lot of `[NARRATIVE]` depth to be genuinely uncovered. Don't assume the summary implies coverage of anything it doesn't explicitly state.
+- Use the filename already reserved for this entry in `PENDING.md` at delivery (Phase 5) — don't pick a new one.
+- At delivery, remove this entry from `PENDING.md` once the real file is written and added to `INDEX.md`.
+
+If `PENDING.md` is empty or missing, or I'd rather dictate something new, begin the conversation with exactly this:
 
 > Tell me about a project. Start wherever feels natural, but by the time we're done I'll want to make sure we've covered:
 >
@@ -228,7 +234,9 @@ If the audit finds problems, fix them before delivery. If it finds things you ca
 
 ## PHASE 5 — DELIVERY
 
-Write the finished entry to a new file in the `stories/` folder. List the folder first to see the naming pattern already in use and to avoid colliding with an existing filename. Name the file `YYYY-MM Employer ProjectName.md`, using the project's start date (year and month if known, year alone if the month wasn't given) and the employer name — e.g. `2022-01 Acme Corp Widget Redesign.md`. For a personal project with no employer, drop the employer and use `YYYY ProjectName.md` — e.g. `2015 Backyard Greenhouse Automation.md`.
+Write the finished entry to a new file in the `stories/` folder. If this entry came from `stories/PENDING.md` (Phase 1), use the filename already reserved there. Otherwise, list the folder first to see the naming pattern already in use and to avoid colliding with an existing filename, then name the file `YYYY-MM Employer ProjectName.md`, using the project's start date (year and month if known, year alone if the month wasn't given) and the employer name — e.g. `2022-01 Acme Corp Widget Redesign.md`. For a personal project with no employer, drop the employer and use `YYYY ProjectName.md` — e.g. `2015 Backyard Greenhouse Automation.md`.
+
+**If this entry came from `stories/PENDING.md`, remove that entry now that the real file exists.**
 
 **Reconcile and update `stories/INDEX.md`.** This is a one-line-per-story index — filename plus a one-line summary, newest first, dated files only — that `résumé prompt.md` and `init prompt.md` rely on to stay in sync with what's actually in `stories/`. Before adding the new entry:
 - List every dated file already in `stories/` (filenames starting with a year) and compare against `INDEX.md`'s existing entries. If any dated file has no entry, or any entry has no matching file, tell me and ask how to resolve it (summarize the orphaned file, drop the stale entry, or fix a rename) rather than guessing or silently fixing it.
@@ -256,3 +264,4 @@ If I request changes, revise the entry and overwrite the file. Repeat until I'm 
 6. **Preserve my voice.** Factual. Technical. Specific. No flair, no narrative drama, no jargon.
 7. **Skills & Tools is never blank.** If the Skills & Tools section of the final entry is empty or sparse, the interview is incomplete by definition — go back and ask. A substantial engineering project cannot have used zero tools. An empty Skills & Tools section at delivery is proof of interview failure, not proof that there was nothing to capture.
 8. **Never let `INDEX.md` silently drift from reality.** Reconcile it against the actual files in `stories/` every time you touch that folder, and surface any mismatch instead of fixing it quietly.
+9. **A `PENDING.md` summary is a starting point, not a finished coverage claim.** It came from a compressed résumé bullet — treat everything it doesn't explicitly state as uncovered, same as if I'd said nothing about it at all. The full checklist and audit still apply in full; a pending entry does not get a lighter interview than one started from scratch.
