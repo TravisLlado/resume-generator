@@ -148,18 +148,24 @@ Then go to **PHASE 7** if the user chose to bootstrap from a résumé (Phase 3),
 
 1. **Get the résumé.** Ask the user to paste the text of their current résumé, or give a file path you can read (PDF, Word, plain text). If you can't parse a file format, ask them to paste the text instead.
 
-2. **Extract candidate stories — conservatively, at résumé granularity.** Identify one candidate per distinct employer/role by default. Only split a single role into multiple candidates when its bullets clearly describe genuinely separate projects, not just multiple bullets about the same effort. Don't invent or infer detail beyond what the résumé actually states — a résumé bullet is a compressed summary, not a source of new facts; deep detail is the interview's job (`story prompt.md`'s follow-up questions), not extraction's.
+2. **Ask what granularity to extract at.** Ask directly:
+
+   > Do you want one candidate story per employer/role, or one per distinct project within each role?
+
+   Most people will think in terms of employers/roles first, since that's how a résumé itself is organized — that's a fine, valid choice. But gently let them know the tradeoff before they decide: per-project, with as much detail as possible, tends to produce better résumés later, since `résumé prompt.md` can only select and recombine what's actually been captured as distinct, addressable stories. A role that spanned two unrelated efforts is genuinely two stories, not one. Don't push — state the tradeoff once, then go with whatever they pick.
+
+3. **Extract candidate stories at the chosen granularity.** Per-role: one candidate per distinct employer/role. Per-project: one candidate per distinct project or effort described within each role, even where the résumé groups several under a single job entry. Either way, don't invent or infer detail beyond what the résumé actually states — a résumé bullet is a compressed summary, not a source of new facts; deep detail is the interview's job (`story prompt.md`'s follow-up questions), not extraction's.
 
    For each candidate, determine:
    - Employer (if applicable) and a short project/role name
    - Approximate date, matching whatever precision the résumé gives (year, or year-month)
    - A one-line summary, drawn directly from the résumé's own language where possible
 
-3. **Show the candidate list to the user before writing anything** — employer/role, date, one-line summary, nothing more. Ask them to confirm, or adjust (split, merge, drop, re-date) before proceeding. Don't skip this step — extraction and splitting judgment calls are exactly the kind of thing worth a human check before they're locked in.
+4. **Show the candidate list to the user before writing anything** — employer/role, date, one-line summary, nothing more. Ask them to confirm, or adjust (split, merge, drop, re-date) before proceeding. Don't skip this step — extraction and splitting judgment calls are exactly the kind of thing worth a human check before they're locked in.
 
-4. **Write the confirmed candidates to `stories/PENDING.md`**, one line each, in the format already established when the file was created (Phase 6). Use the same filename convention as everywhere else (`YYYY-MM Employer ProjectName.md` / `YYYY ProjectName.md`) for each candidate's eventual filename — this reserves the name so `story prompt.md` knows exactly which file to create when it works through this entry.
+5. **Write the confirmed candidates to `stories/PENDING.md`**, one line each, in the format already established when the file was created (Phase 6). Use the same filename convention as everywhere else (`YYYY-MM Employer ProjectName.md` / `YYYY ProjectName.md`) for each candidate's eventual filename — this reserves the name so `story prompt.md` knows exactly which file to create when it works through this entry.
 
-5. **Do not create the dated story files yet, and do not add these candidates to `INDEX.md`.** A résumé bullet is not a complete story. `INDEX.md` only ever contains finished entries; `PENDING.md` is the holding area until `story prompt.md` interviews a candidate into a full one.
+6. **Do not create the dated story files yet, and do not add these candidates to `INDEX.md`.** A résumé bullet is not a complete story. `INDEX.md` only ever contains finished entries; `PENDING.md` is the holding area until `story prompt.md` interviews a candidate into a full one.
 
 ---
 
