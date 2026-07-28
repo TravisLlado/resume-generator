@@ -16,6 +16,8 @@ Don't reconcile the "Reference Files" table here — that's `résumé prompt.md`
 
 Also check `stories/TODO.md` — if it has open items, mention how many, but don't read them all aloud; that's for `story prompt.md` and `résumé prompt.md` to act on when relevant.
 
+**Also verify the PDF toolchain**, since it's possible this repo was set up before that existed, or on a different machine than the one you're on now: run `typst --version && ls pdf/template.typ pdf/render.sh pdf/smoke-test.typ`. If anything is missing or `typst` isn't found, run **PHASE 3.5 — PDF TOOLCHAIN SETUP** below before continuing. If everything is already present, skip it.
+
 Once reconciled, skip straight to **PHASE 5 — HANDOFF**. Do not otherwise re-run setup or overwrite existing data.
 
 ---
@@ -26,8 +28,8 @@ Most people already have a résumé and are thinking "tailor this to a job," not
 
 > Do you already have a résumé you'd like to build from, or would you rather start from scratch and build up your story archive through the interview?
 
-- **From an existing résumé** → after `stories/` is scaffolded (Phase 3), go to **PHASE 4 — BOOTSTRAP FROM RÉSUMÉ** before handoff.
-- **From scratch** → skip Phase 4 entirely. Proceed straight to Phase 5 once Phase 3 is done, and offer to start a story interview cold, as usual.
+- **From an existing résumé** → after `stories/` is scaffolded (Phase 3) and the PDF toolchain is set up (Phase 3.5), go to **PHASE 4 — BOOTSTRAP FROM RÉSUMÉ** before handoff.
+- **From scratch** → skip Phase 4 entirely. Proceed straight to Phase 5 once Phases 3 and 3.5 are done, and offer to start a story interview cold, as usual.
 
 ---
 
@@ -97,7 +99,254 @@ Everything here is local. Nothing gets pushed anywhere during setup — if a rem
 5. **Do not interview the user to fill in the reference files.** Answering short structured fields (name, email, a list of schools) one at a time through conversation is slow and tedious compared to just editing a file — leave the reference-file placeholders as they are and tell the user in Phase 5 to fill them in directly in their own editor. The conversational interview (`story prompt.md`) is reserved for narrative content that's genuinely hard to write cold — individual jobs and projects — not for simple reference fields like these.
 6. Commit locally (`git add -A && git commit -m "Initial setup"`). Do not push. There is nothing to push to unless the user already has a remote and asks — see Rule 1.
 
-Then go to **PHASE 4** if the user chose to bootstrap from a résumé (Phase 2), otherwise skip straight to **PHASE 5 — HANDOFF**.
+Then go to **PHASE 3.5 — PDF TOOLCHAIN SETUP**. It runs either way, regardless of which path was chosen in Phase 2.
+
+---
+
+## PHASE 3.5 — PDF TOOLCHAIN SETUP
+
+This is what turns a drafted résumé into an actual PDF file. Set it up now, once, so `résumé prompt.md` never has to improvise a PDF tool mid-run later. Follow this exactly. Do not substitute a different PDF technology (no LaTeX, no pandoc, no WeasyPrint, no reportlab, no wkhtmltopdf, no headless browsers) even if installing Typst hits a snag — work through the Troubleshooting list below instead, and if it's still unresolved, stop and tell the user rather than improvising an alternative. Every résumé this repo ever produces should come out of this one pipeline, so output stays consistent across machines and sessions.
+
+### Overview
+
+The toolchain is **Typst**, a modern typesetting system distributed as a single static binary with zero runtime dependencies. Division of labor:
+
+- **Layout** lives in `pdf/template.typ`, committed to the repo, never edited when generating an actual résumé later.
+- **Content** is written per-run as a `.typ` file in `pdf/output/` (that happens in `résumé prompt.md`, not here).
+- **Rendering** is done by `pdf/render.sh`, which compiles a content file to PDF and also exports every page as a PNG so length and appearance can be checked visually.
+
+Four steps: (1) install the `typst` binary, (2) create the committed toolchain files if missing, (3) run the smoke test, (4) commit locally.
+
+### Step 1 — Install Typst
+
+Check first:
+
+```bash
+typst --version
+```
+
+Any version **0.12.0 or newer** is fine — skip to Step 2 if so. Otherwise install using the first applicable method for the current OS:
+
+**macOS:**
+```bash
+brew install typst
+```
+If Homebrew isn't installed, use the binary download fallback below rather than installing Homebrew.
+
+**Windows** (PowerShell):
+```powershell
+winget install --id Typst.Typst -e
+```
+Open a fresh shell afterward so `typst` is on PATH.
+
+**Linux, preferred (snap available):**
+```bash
+sudo snap install typst
+```
+
+**Any OS, fallback — direct binary download from GitHub Releases:**
+
+```bash
+mkdir -p ~/.local/bin
+cd /tmp
+# For x86_64 Linux:
+curl -fsSL -o typst.tar.xz https://github.com/typst/typst/releases/latest/download/typst-x86_64-unknown-linux-musl.tar.xz
+tar -xJf typst.tar.xz
+cp typst-x86_64-unknown-linux-musl/typst ~/.local/bin/
+```
+
+Same URL pattern for other platforms — swap the asset name: `typst-aarch64-unknown-linux-musl.tar.xz` (ARM Linux), `typst-aarch64-apple-darwin.tar.xz` (macOS Apple Silicon), `typst-x86_64-apple-darwin.tar.xz` (macOS Intel), `typst-x86_64-pc-windows-msvc.zip` (Windows).
+
+If `~/.local/bin` isn't on PATH, add it to the shell profile (`~/.bashrc` or `~/.zshrc`): `export PATH="$HOME/.local/bin:$PATH"`.
+
+Verify regardless of method — do not proceed until this prints a version ≥ 0.12.0:
+```bash
+typst --version
+```
+
+### Step 2 — Create the committed toolchain files
+
+Check whether `pdf/template.typ`, `pdf/render.sh`, and `pdf/smoke-test.typ` already exist (they may already be committed as part of this template). Create only what's missing, with exactly the contents below — do not "improve" or restyle them.
+
+#### File: `pdf/template.typ`
+
+```typst
+// pdf/template.typ
+// Layout and styling for all generated résumés.
+// NEVER edit this file during résumé generation. Per-run tuning happens
+// only through the parameters of resume(), set from the content file.
+//
+// Tunable parameters and their ALLOWED RANGES (do not exceed):
+//   font-size:  9.5pt – 10.5pt   (default 10pt)
+//   leading:    0.65em – 1.0em   (default 0.75em; approx 1.2x–1.5x line spacing)
+//   margin:     1.4cm – 2.0cm per side (default x: 1.7cm, y: 1.6cm)
+
+#let resume(
+  name: "",
+  contact-line: "",
+  font-size: 10pt,
+  leading: 0.75em,
+  margin: (x: 1.7cm, y: 1.6cm),
+  body
+) = {
+  set page(paper: "us-letter", margin: margin)
+  set text(
+    font: ("Georgia", "Noto Serif", "Libertinus Serif"),
+    size: font-size,
+  )
+  set par(leading: leading, justify: false)
+  set list(marker: [•], indent: 0.5em, body-indent: 0.5em, spacing: leading)
+
+  // Header: name centered, contact info on one line beneath it.
+  align(center)[
+    #text(size: font-size * 1.7, weight: "bold")[#name]
+    #v(0.35em, weak: true)
+    #text(size: font-size * 0.95)[#contact-line]
+  ]
+  v(0.6em)
+  body
+}
+
+// Section header: bold uppercase title with a thin rule beneath.
+#let section(title) = {
+  v(0.9em, weak: true)
+  block(breakable: false)[
+    #text(size: 1.05em, weight: "bold", tracking: 0.03em)[#upper(title)]
+    #v(-0.55em)
+    #line(length: 100%, stroke: 0.6pt)
+  ]
+  v(0.35em, weak: true)
+}
+
+// One job, project, or education entry.
+// Usage: #entry("Title", "Organization", "2021 - Present")[ ...bullets... ]
+// Pass an empty body for entries with no bullets: #entry(...)[]
+#let entry(title, org, dates, body) = {
+  v(0.55em, weak: true)
+  block(breakable: false, grid(
+    columns: (1fr, auto),
+    column-gutter: 1em,
+    [*#title*, #org],
+    text(size: 0.95em)[#dates],
+  ))
+  v(0.15em, weak: true)
+  body
+}
+```
+
+#### File: `pdf/render.sh`
+
+```bash
+#!/usr/bin/env bash
+# pdf/render.sh — compile a résumé content file to PDF and per-page PNG previews.
+# Usage: bash pdf/render.sh "pdf/output/<name>.typ"
+set -euo pipefail
+
+SRC="$1"
+STEM="${SRC%.typ}"
+
+if [ ! -f "$SRC" ]; then
+  echo "ERROR: $SRC not found" >&2
+  exit 1
+fi
+
+# Style rule enforced mechanically: no em-dashes anywhere in the document.
+if grep -n $'—' "$SRC"; then
+  echo "ERROR: em-dash found in $SRC (lines above). Remove before rendering." >&2
+  exit 1
+fi
+
+rm -f "${STEM}"-preview-*.png
+
+# --root pins Typst's sandbox to the repo root (the directory this script is
+# invoked from), since by default it's the input file's own parent directory,
+# which is too narrow to let pdf/output/*.typ import ../template.typ.
+typst compile --root . "$SRC" "${STEM}.pdf"
+typst compile --root . --format png --ppi 96 "$SRC" "${STEM}-preview-{p}.png"
+
+echo "PDF: ${STEM}.pdf"
+echo "Previews:"
+ls -1 "${STEM}"-preview-*.png
+```
+
+After creating it: `chmod +x pdf/render.sh`.
+
+The script is invoked as `bash pdf/render.sh ...`, which works on macOS, Linux, and Windows under Git Bash. If `bash` is genuinely unavailable, the script's two `typst compile` commands can be run directly instead, but then the em-dash grep check must be done manually before compiling.
+
+#### File: `pdf/smoke-test.typ`
+
+```typst
+// pdf/smoke-test.typ - verifies the toolchain end-to-end. Not a real résumé.
+#import "template.typ": resume, section, entry
+
+#show: resume.with(
+  name: "Smoke Test",
+  contact-line: "test@example.com | (555) 000-0000 | Nowhere, XX",
+)
+
+#section("Summary")
+This document exists only to verify that Typst, the template, and the render
+script all work on this machine. If this compiles to a PDF and a PNG preview,
+the toolchain is functional.
+
+#section("Professional Experience")
+#entry("Test Engineer", "Toolchain Verification Inc.", "2026 - Present")[
+  - Compiled a document containing a list, an entry, and a section header.
+  - Confirmed special characters render when escaped: C\#, 100\%, \$1M, R\&D.
+]
+
+#section("Education")
+#entry("B.S. Existence", "University of Smoke Tests", "2020")[]
+```
+
+Note the header comment above uses a plain hyphen, not an em-dash — `render.sh`'s em-dash check scans the whole file, including comments, so an em-dash anywhere in this file (even one describing the file) would make the smoke test fail its own check. Also note `contact-line` is a plain string with no backslash-escaping (see the note on string arguments in `résumé prompt.md`'s PDF Rendering section) — only the bulleted body text below it is markup that needs escaping.
+
+#### `.gitignore` addition
+
+```bash
+grep -qx 'pdf/output/' .gitignore || echo 'pdf/output/' >> .gitignore
+mkdir -p pdf/output
+```
+
+Generated résumés contain the user's personal information assembled per-application; `pdf/output/` is scratch/working space, not a source, and stays out of version control by default. (The permanent, committed record of each application lives in `generated résumés/` instead — see `résumé prompt.md`'s Archiving section.)
+
+### Step 3 — Run the smoke test
+
+```bash
+cd pdf
+bash render.sh smoke-test.typ
+cd ..
+```
+
+Then verify, in order:
+
+1. The command exited 0 and printed a PDF path and at least one preview PNG path.
+2. **View `pdf/smoke-test-preview-1.png`** with the image-viewing tool and confirm visually: centered bold name at top, contact line under it with a clean `test@example.com` (no stray backslash), uppercase section headers with rules, a job entry with title/org on the left and dates on the right, round bullets, and the special characters `C#`, `100%`, `$1M`, `R&D` rendered literally.
+3. A compiler warning about unknown font family "georgia" or "noto serif" is normal and expected on machines without those fonts (Typst falls back to bundled Libertinus Serif) — not an error, no fix needed.
+
+Clean up the smoke test artifacts afterward, keeping the `.typ` source:
+```bash
+rm -f pdf/smoke-test.pdf pdf/smoke-test-preview-*.png
+```
+
+### Step 4 — Commit
+
+Commit `pdf/template.typ`, `pdf/render.sh`, `pdf/smoke-test.typ`, and the `.gitignore` change locally. Do not push — same standing rule as everywhere else in this prompt (see Rule 1).
+
+### Troubleshooting
+
+- **`typst: command not found` after installing:** the current shell hasn't refreshed PATH. Use the full path (e.g. `~/.local/bin/typst`) or re-source the profile. On Windows/winget, a new shell session is required.
+- **`winget`/`brew`/`snap` not available:** use the direct binary download method in Step 1. Don't install a package manager just for this.
+- **GitHub release download fails (offline/blocked network):** tell the user Typst couldn't be installed and that network access may need to change. Do not fall back to another PDF technology.
+- **PNG export errors about the output pattern:** very old Typst used `{n}` instead of `{p}` for the page placeholder — upgrade Typst to ≥ 0.12 rather than editing the script.
+- **Compilation error pointing at a line/column:** a content problem, not a toolchain problem — read the message and fix that line. Common cause: an unescaped special character in markup body text (see `résumé prompt.md`'s escaping table).
+- **`Permission denied` running render.sh:** invoke as `bash pdf/render.sh ...` (no execute bit needed) or re-run `chmod +x pdf/render.sh`.
+
+### Rules that override convenience
+
+1. Typst is the only PDF technology this repo uses. Never install or use pandoc, LaTeX, WeasyPrint, reportlab, fpdf, wkhtmltopdf, Chromium printing, or any other PDF generator here, even as a "temporary" workaround.
+2. `pdf/template.typ` and `pdf/render.sh` are committed infrastructure. This phase may create them if missing; nothing may rewrite them ad hoc afterward. Deliberate layout changes are their own task, done with the user's explicit involvement, never a side effect of generating a résumé.
+3. If setup can't be completed, say so plainly and stop. A missing toolchain reported honestly is recoverable; a silently substituted one produces inconsistent résumés indefinitely.
 
 ---
 
@@ -142,6 +391,7 @@ Tell the user, concisely:
 - That the reference files in `stories/` (`Contact Info.md`, `Résumé Preferences.md`, `Education.md`, `Skills.md`, `Glossary.md`, `Publications and Presentations.md`, `Amateur Training and Experience.md`) are still placeholders — tracked as `Uninitialized` in `stories/INDEX.md`'s "Reference Files" table — and the fastest way to fill them in is to just open and edit them directly — it's a handful of short structured fields, much faster by hand than dictating them here. They don't block getting started; fill them in whenever convenient. `résumé prompt.md` will flip each row to `Filled In` once it notices the file's actually been edited.
 - If Phase 4 ran: how many candidate stories are staged as `Pending` in `stories/INDEX.md`, extracted from their résumé, ready to be worked through one at a time via `story prompt.md`.
 - That `story prompt.md` captures a new job or project into `stories/` — that one's worth doing as a conversation, since narrative is harder to write cold — and `résumé prompt.md` drafts a tailored résumé once `posting.txt` and at least one story exist.
+- That the PDF toolchain (Phase 3.5) is set up and verified, so `résumé prompt.md` can produce a PDF without any extra setup when the time comes.
 
 Then:
 - If there are `Pending` rows in `stories/INDEX.md`, ask if they'd like to start working through them now, beginning with the first. If yes, proceed directly into `story prompt.md` for that candidate, in this same conversation.

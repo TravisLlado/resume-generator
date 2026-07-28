@@ -18,6 +18,7 @@ The two steps are independent. You don't touch `stories/` again just to apply so
 1. Make your own private copy of this repo — GitHub's "Use this template" button is the easiest way (creates a fresh history, no shared commits with this repo). Clone it.
 2. Run `init prompt.md` as a prompt with your coding agent. It will ask whether you already have a résumé to build from or want to start from scratch — most people have one, so lead with that expectation, but it still asks. Either way it will:
    - Set up `stories/` right here in your copy — `INDEX.md` and `TODO.md`, committed locally. Nothing gets pushed anywhere during setup. The reference-file placeholders and `posting.txt` are already there as part of the template — you fill the reference files in afterward, directly in your editor; it's a handful of short fields and much faster by hand than dictating them.
+   - Install the PDF toolchain (Typst) if it isn't already on this machine, and set up `pdf/` — the committed layout template and render script `résumé prompt.md` uses to actually produce a PDF later, verified with a smoke test before moving on. One-time, automatic, no separate install step for you to run.
    - If you have a résumé: extract a candidate story per role/project from it (conservatively — no invented detail), then stage them as `Pending` rows directly in `stories/INDEX.md` for you to review and edit yourself — split, merge, drop, re-date — rather than dumping a long list into the conversation; ask for the conversation route instead if you'd rather do it that way. Either way nothing is final until you've confirmed it, and `story prompt.md` interviews each staged row into a full entry one at a time.
    - Hand off directly into capturing your first project — starting from a staged candidate if you bootstrapped, cold otherwise.
 3. From then on, work out of your copy: run `story prompt.md` to capture a job or project, and `résumé prompt.md` to generate a tailored résumé — it'll ask for the posting (URL or pasted text) itself. Push to a remote whenever you want backup — see the note on git safety below before you do.
@@ -26,7 +27,7 @@ The two steps are independent. You don't touch `stories/` again just to apply so
 
 - **`story prompt.md`** — an interview prompt. Dictate or type about a job or project; it tracks coverage against a fixed checklist (who/when, the problem, what you built, what went wrong, outcomes, collaborations, and a dedicated skills-and-tools pass), asks targeted follow-ups for anything missing, and writes the result as a new file in `stories/`. If `stories/INDEX.md` has `Pending` rows (from a résumé bootstrap), it offers to work through one of those first, using its summary as a starting point rather than an opening cold — but the same full checklist and audit still apply. Unresolved issues (contradictions, undefined terms) get logged to `stories/TODO.md`, not just mentioned in conversation, since this process spans many sessions.
 - **`résumé prompt.md`** — the generator. Makes sure `posting.txt` actually holds the posting you want this run built for — asking for a URL or a pasted copy if it's empty, and confirming reuse rather than assuming if it's already got one left over from an interrupted prior run — then reconciles `stories/INDEX.md`, checks `stories/TODO.md` for known gaps relevant to this posting, reads every finished story, drafts a résumé tailored to that posting, then runs a five-part self-audit (factual accuracy, inflation check, jargon/acronym check, job-description match, length check) before delivering a PDF plus the audit report. Before delivery, it archives the posting and the final PDF into `generated résumés/`, both filenames prefixed with the same date/time so every application leaves a paired, timestamped record, then resets `posting.txt` back to its blank placeholder so it's ready for the next one. Job-description gaps not covered by any story get logged to `TODO.md` too, so a requirement that keeps recurring across postings actually gets noticed.
-- **`init prompt.md`** — one-time setup. Adds `INDEX.md` and `TODO.md` to `stories/` (already seeded with reference-file placeholders as part of the template) so the other two prompts have something to read from and write to, and optionally bootstraps a starting set of candidate stories from an existing résumé.
+- **`init prompt.md`** — one-time setup. Adds `INDEX.md` and `TODO.md` to `stories/` (already seeded with reference-file placeholders as part of the template) so the other two prompts have something to read from and write to; installs Typst and sets up `pdf/` (the PDF layout template and render script) so `résumé prompt.md` never has to improvise a PDF tool later; and optionally bootstraps a starting set of candidate stories from an existing résumé.
 
 ## Repo structure once set up
 
@@ -46,13 +47,21 @@ your-private-copy/
 │   ├── Amateur Training and Experience.md
 │   ├── INDEX.md                  ← one row per story (File / Summary / Status), kept in sync automatically
 │   └── TODO.md                   ← running list of known gaps, not a full history
+├── pdf/                          ← committed PDF toolchain, set up once by init prompt.md
+│   ├── template.typ              ← layout (fonts, spacing, margins) — never edited per-run
+│   ├── render.sh                 ← compiles a résumé's .typ content file to PDF + PNG previews
+│   ├── smoke-test.typ            ← verifies the toolchain works on this machine
+│   └── output/                   ← scratch space for the résumé currently being rendered/tuned (gitignored)
 ├── posting.txt                  ← the job description you're currently targeting
 └── generated résumés/           ← every past application, archived automatically
     ├── 2026-07-27 1432 Acme Corp, Senior Engineer posting.txt
+    ├── 2026-07-27 1432 Jane Doe Résumé - Acme Corp, Senior Engineer.typ
     └── 2026-07-27 1432 Jane Doe Résumé - Acme Corp, Senior Engineer.pdf
 ```
 
 `stories/Résumé Preferences.md` is where your personal positioning lives — your bio, your target level, and how you want your current title framed. `résumé prompt.md` is otherwise generic and has no opinion about who you are; it reads that file first and applies it throughout.
+
+PDF generation always goes through Typst via `pdf/render.sh` — never any other tool. `init prompt.md` installs Typst automatically if it isn't already on the machine; you shouldn't need to touch this yourself.
 
 ## A note on git safety
 

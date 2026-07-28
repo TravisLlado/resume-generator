@@ -8,6 +8,7 @@ You are working inside a git repository, not a browser chat with attached files.
   - **Reference files** (no date prefix) — `Contact Info.md`, `Education.md`, `Skills.md`, `Glossary.md`, `Publications and Presentations.md`, `Amateur Training and Experience.md`, and `Résumé Preferences.md` — material that isn't tied to a single dated entry.
   - **`INDEX.md`** — two tables. The main one (File, Summary, Status) covers dated files only, maintained by this prompt and `story prompt.md`. Status is `Done` (a real file exists) or `Pending` (reserved for a résumé-extracted candidate not yet interviewed by `story prompt.md` — has no file yet, so don't try to read it). A second "Reference Files" table (File, Status) covers the reference files below — Status is `Uninitialized` (still placeholder text) or `Filled In` (edited with real information) — and this prompt is the one responsible for keeping it current, since it's the one that actually reads those files.
   - **`TODO.md`** — a running list of known gaps and loose ends, not tied to a single dated entry. Maintained by this prompt and `story prompt.md`.
+- **pdf/** — the committed PDF toolchain (`template.typ`, `render.sh`), set up once by `init prompt.md`, plus `pdf/output/` (gitignored scratch space) where each run's content file and preview PNGs live. See the PDF Rendering section below for how it's actually used to turn a draft into a PDF.
 
 **Before doing anything else, make sure `posting.txt` actually holds the posting I want this résumé built for.**
 
@@ -68,7 +69,7 @@ Additionally, a "skill" must be a noun, not an adjective. For example, "Cross-Fu
 ### Structure
 
 - Target length: two-to-three pages. This means 1000-1500 words. Aim for at least 1000 words, and up to 1500 words if the additional content is directly relevant to the job posting and meaningfully strengthens the application. Filler, redundancy, or marginal experience should be cut before adding a third page. When in doubt, cut. Greater than three pages is unacceptable.
-- Document length should be measured using the actual PDF file length on paper, not based on a simple measurement like PdfReader "Pages", which rounds up to the nearest whole page and therefore tends to over-estimate length. If the final document is less than 1.9 pages, then too much has been cut. We will always have enough to content to fill two complete pages.
+- Document length is measured visually against the rendered PDF, not from a "number of pages" metadata field (see PDF Rendering, below, for exactly how). If the final document is less than 1.9 pages, then too much has been cut. We will always have enough content to fill two complete pages.
 - Prefer fewer, stronger bullet points over comprehensive coverage. Three to five bullets per role is typical. More than six per role is almost certainly too many.
 - Contact information from `stories/Contact Info.md` should appear at the top of the résumé.
 - Sections: Summary, Skills, Professional Experience, Education, Publications (include only if relevant to the role).
@@ -101,24 +102,150 @@ Additionally, a "skill" must be a noun, not an adjective. For example, "Cross-Fu
 
 ### Output Format
 
-- Deliver the résumé as a clean, professional PDF file suitable for submission to an employer.
+- Deliver the résumé as a clean, professional PDF file suitable for submission to an employer. Do not use color, graphics, or elaborate design elements — it should look like a traditional senior engineer's résumé.
 - The final document should be two full or three full pages. A 2.1-page résumé looks unprofessional.
-- Use a clean, professional font such as Georgia or Noto Serif or similar.
-- Standard résumé formatting: clear section headers, consistent spacing, readable font size (size 10 by default).
-- Use 1.25x-1.5x vertical spacing between lines for readability.
-- You can adjust vertical spacing, font size, and page borders to fit the résumé to an even two or three pages.
-- Do not use color, graphics, or elaborate design elements. The PDF should look like a traditional senior engineer's résumé.
-- The PDF filename should follow the format: `<Date> <Time> <My Name> Résumé - <Employer>, <Role>.pdf`, where Date and Time are today's date and local time (see Archiving, below), My Name comes from `stories/Contact Info.md`, and Employer and Role are taken from the job posting.
+- The mechanics of actually producing the PDF — content file format, fonts, spacing, margins, and how to hit an even page count — are entirely handled by the **PDF RENDERING** section below. This section is about what the résumé says; that one is about how it's typeset. Do not improvise a different way to generate the PDF.
+- The final PDF filename (produced by Archiving, below, in `generated résumés/`) follows the format: `<Date> <Time> <My Name> Résumé - <Employer>, <Role>.pdf`, where Date and Time are today's date and local time, My Name comes from `stories/Contact Info.md`, and Employer and Role are taken from the job posting.
 
-### Archiving
+## PDF RENDERING
 
-Every time a résumé is generated, save both the posting and the résumé into `generated résumés/` (create the folder if it doesn't already exist) so there's a permanent record of what was actually submitted for each application:
+This is the one and only way this repo turns a drafted résumé into a PDF. Follow it exactly. Do not generate the PDF any other way, do not install any other PDF tooling, and do not edit `pdf/template.typ` — all layout decisions are already made there, and all per-run adjustment happens through three documented parameters.
 
-- Use a shared filename prefix of `<Date> <Time>` for both files, using today's date (`YYYY-MM-DD`) and the local time in 24-hour `HHMM` format (no colons — they're unsafe in filenames), e.g. `2026-07-27 1432`. Compute this once per run and reuse it for both files so they stay paired.
-- Copy `posting.txt` into `generated résumés/<Date> <Time> <Employer>, <Role> posting.txt`.
-- Save the résumé PDF into `generated résumés/` using the filename format given above (which already includes the same `<Date> <Time>` prefix), not just at the top level of the repo.
-- After both copies are safely written, reset `posting.txt` back to its uninitialized placeholder state so the next run doesn't mistake this posting for a new one: `# Paste the job posting for whatever résumé you're currently generating here. résumé prompt.md will also ask for it (a URL or pasted text) if this is empty.`
-- Do this after the audit passes and the résumé is finalized, not off the first draft.
+**The pipeline in one paragraph:** write the résumé's content into a Typst content file in `pdf/output/`, run `pdf/render.sh`, which produces the PDF plus one PNG image per page. View the PNGs to verify appearance and measure document length visually, adjust the three tuning parameters if needed to hit an even page count, re-render, and carry the result into PASS 2 — AUDIT below. Content and layout never mix: the content file contains the résumé's words and the three tuning values, nothing else; the template contains everything about how it looks.
+
+### Step 1 — Preflight
+
+Confirm the toolchain exists before drafting is finalized, so a missing toolchain surfaces early:
+
+```bash
+typst --version && ls pdf/template.typ pdf/render.sh
+```
+
+If either check fails, stop and tell me to run `init prompt.md` (its PDF Toolchain Setup phase) first. Do not improvise a substitute.
+
+Ensure the output directory exists: `mkdir -p pdf/output`.
+
+### Step 2 — Write the content file
+
+#### Filename
+
+`pdf/output/<My Name> Résumé - <Employer>, <Role>.typ`, using the same Name/Employer/Role as the final archived filename (see Output Format, above). The compiled PDF automatically gets the same name with a `.pdf` extension. Always quote this path in shell commands, since it contains spaces.
+
+#### Skeleton
+
+The content file must follow this structure exactly — same import, same `#show` rule, sections built from the two helper functions:
+
+```typst
+#import "../template.typ": resume, section, entry
+
+#show: resume.with(
+  name: "Jane Doe",
+  contact-line: "jane.doe@example.com | (555) 123-4567 | Austin, TX | linkedin.com/in/janedoe",
+  font-size: 10pt,      // TUNING: 9.5pt - 10.5pt
+  leading: 0.75em,      // TUNING: 0.65em - 1.0em
+  margin: (x: 1.7cm, y: 1.6cm),  // TUNING: 1.4cm - 2.0cm per side
+)
+
+#section("Summary")
+Three to four sentences positioning the candidate for this specific role,
+written per the drafting instructions.
+
+#section("Skills")
+*Embedded Systems:* high-performance BLDC motor control, real-time firmware \
+*Protocols:* SPI, RS485, UART, CAN, LIN \
+*Process:* code review, architectural RFCs, cross-functional planning
+
+#section("Professional Experience")
+#entry("Senior Firmware Engineer", "Acme Robotics", "2021 - Present")[
+  - Achievement-oriented bullet: what was built, what problem it solved, outcome.
+  - Another bullet. Three to five per role is typical.
+]
+
+#entry("Firmware Engineer", "Widget Corp", "2017 - 2021")[
+  - Bullets for this role.
+]
+
+#section("Education")
+#entry("M.S. Mechanical Engineering", "State University", "2014")[]
+
+#section("Publications")
+// Include this section only if relevant to the role, per drafting instructions.
+```
+
+Notes on the helpers:
+
+- `#section("Title")` renders an uppercase header with a rule. Pass the title in normal case; the template uppercases it.
+- `#entry(title, org, dates)[body]` puts title and organization on the left (separated by a comma — the template deliberately does not use a dash there) and dates on the right. For entries with no bullets (most Education lines), pass an empty body: `#entry(...)[]`.
+- In the Skills section, end each line with ` \` (space, backslash) to force a line break; a blank line would start a new paragraph with extra spacing.
+- Date ranges use a plain hyphen with spaces (`2021 - Present`). Never an em-dash — the render script mechanically rejects any file containing one, anywhere in the file (including comments).
+
+**`name` and `contact-line` in `resume.with(...)`, and `title`/`org`/`dates` in `entry(...)`, are plain Typst strings — not markup.** Write them literally, with no backslash-escaping: `jane.doe@example.com` is correct, `jane.doe\@example.com` renders a literal, wrong backslash in the output (verified before this instruction was written). The escaping table below applies only to markup body text — section paragraphs and the bracketed `[...]` bullet lists passed to `#entry(...)`.
+
+#### Escaping special characters (markup body text only)
+
+Typst treats certain characters as markup. When they appear literally in body text — section paragraphs and bullet lists, not the string arguments above — escape them with a backslash:
+
+| Literal text | Write in the .typ file |
+|---|---|
+| `C#`, `F#` | `C\#`, `F\#` |
+| `$1M`, `$50k` | `\$1M`, `\$50k` |
+| `100%` | `100\%` (only strictly needed before other markup, but always safe) |
+| `R&D` | safe unescaped — `&` has no special meaning in text |
+| `*literal asterisk*` | `\*literal asterisk\*` |
+| `snake_case_name` | `snake\_case\_name` |
+| `user@domain.com` | `user\@domain.com` |
+| `<angle brackets>` | `\<angle brackets\>` |
+
+Also: never put a bare `//` in body text (Typst reads it as a comment). Write URLs without the protocol (`linkedin.com/in/janedoe`, `github.com/janedoe`) — correct résumé style anyway — or use `#link("https://example.com")[example.com]` if a clickable link is wanted.
+
+If compilation fails, the error message includes the exact file, line, and column. Read it, fix that line (an unescaped character in body text is the most common cause — or an accidentally-escaped one inside a string argument, per the note above), recompile. Never respond to a content error by switching tools.
+
+### Step 3 — Render
+
+```bash
+bash pdf/render.sh "pdf/output/Jane Doe Résumé - Acme, Senior Firmware Engineer.typ"
+```
+
+This validates the em-dash ban, compiles the PDF, and writes `...-preview-1.png`, `...-preview-2.png`, etc., one per page. A compiler warning about unknown font family "georgia"/"noto serif" is normal on machines without those fonts (Typst falls back to bundled Libertinus Serif) and requires no action.
+
+### Step 4 — Measure length and appearance visually
+
+**Count the preview PNGs** — that is the page count. Then **view every preview PNG** with the image-viewing tool and check:
+
+1. **Length.** Estimate, to a resolution of 0.1 page, how far down the final page the content extends (e.g., text ending two-thirds down page 2 = 1.7 pages). This visual estimate is the document length used throughout this prompt, including Audit 5 below — never use PDF metadata page counts, which round up.
+2. **Appearance.** Header centered and intact; section rules present; no orphaned section header sitting alone at the bottom of a page; no single stranded bullet at the top of a page; dates right-aligned and not wrapping; nothing overlapping or clipped.
+
+The target is a document that ends **within the last 0.15 page of an even page boundary**: content filling roughly 1.9–2.0 pages or 2.9–3.0 pages is acceptable; anything else needs adjustment.
+
+### Step 5 — Tune to an even page count
+
+Adjust only the three TUNING values at the top of the content file, in this order of preference, staying strictly inside the allowed ranges:
+
+1. **`leading`** (0.65em–1.0em) — the finest, least visible knob. Moving it 0.05em typically shifts length a few percent. Try this first.
+2. **`font-size`** (9.5pt–10.5pt) — coarser. Use 0.25pt steps.
+3. **`margin`** (1.4cm–2.0cm per side) — coarsest and most visible. Last resort, small steps.
+
+After each adjustment, re-run Step 3 and re-measure per Step 4. **Hard limit: five tuning iterations.** If the document still cannot land within 0.15 page of an even boundary inside the allowed ranges, the problem is content volume, not layout: return to the draft and cut the weakest material (if overshooting) or add the next-most-relevant material (if undershooting), per this prompt's length rules (Structure, above), then re-render. Never exceed the parameter ranges, never edit `pdf/template.typ`, and never fake the target by inserting manual spacing, page breaks, or blank content into the content file.
+
+If a section header or lone bullet is stranded at a page boundary, a small `leading` adjustment almost always resolves it; the template already prevents entries' header rows from splitting across pages.
+
+Once the document lands within range and looks right, move on to PASS 2 — AUDIT below. Keep the `.typ` file and its preview PNGs in `pdf/output/` — if an audit finding changes the content, edit that same `.typ` file and repeat Steps 3–5 before finalizing. Don't delete the preview PNGs until Archiving (after the audit) is complete; they're the evidence behind the Audit 5 length measurement.
+
+### Troubleshooting
+
+- **`typst: command not found`** — toolchain not installed on this machine. Direct me to `init prompt.md`'s PDF Toolchain Setup phase. Do not install any substitute PDF tool.
+- **Compile error with a line/column position** — content problem; fix the indicated line (usually an unescaped `#`, `$`, `_`, `*`, `@`, or a bare `//` in body text — or a stray backslash inside a string argument, see the note above).
+- **`error: file not found` on the import line** — the content file isn't in `pdf/output/`, so the relative path `../template.typ` is wrong. Move the content file to `pdf/output/`; do not change the import to compensate.
+- **Render script rejects the file for an em-dash** — the grep output lists the offending lines; replace each em-dash per the style rules (usually with a comma, colon, or restructured sentence) and re-render.
+- **PNG pattern error mentioning `{p}`** — Typst is older than 0.12; it must be upgraded (see `init prompt.md`'s PDF Toolchain Setup phase). Do not work around it.
+- **Fonts look different than expected** — if Georgia isn't installed on this machine, output uses the bundled Libertinus Serif fallback. This is by design and acceptable; do not download or install fonts mid-run.
+
+### Rules that override everything in this section's vicinity
+
+1. This pipeline is the only way a PDF gets made. No other libraries, no other converters, no printing HTML, no exceptions for "just this once."
+2. `pdf/template.typ` is read-only during résumé generation. If its layout genuinely needs to change, tell me and let me decide — that is a separate task with its own commit, never a silent side effect.
+3. Length is measured by viewing the preview PNGs, to 0.1-page resolution. Metadata page counts are never used for any length judgment.
+4. If the pipeline is broken and cannot be repaired by the troubleshooting steps above, deliver the drafted content and a plain statement of what's broken. A missing PDF explained honestly beats a PDF produced by a rogue toolchain.
 
 ## PASS 2 — AUDIT
 
@@ -144,7 +271,7 @@ Extract the 8-10 most important requirements from the job posting. For each one,
 
 ### Audit 5: Document Length
 
-The length of the final PDF should be at least two complete pages and not more than three complete pages. This should be assessed by a visual inspection of the document, not by reading the document's "number of pages" from metadata.
+The length of the final PDF should be at least two complete pages and not more than three complete pages. Use the visual measurement from PDF Rendering (Step 4) — never PDF metadata page counts. If any fix from Audits 1–4 changed bullet text meaningfully, re-render (PDF Rendering, Steps 3–5) before finalizing this check, since edits can shift the page count.
 
 ### Audit Report Format
 
@@ -171,10 +298,22 @@ AUDIT REPORT
 [Number of pages, measured visually, with a resolution of 0.1 page]
 ```
 
+## ARCHIVING
+
+Every time a résumé is generated, save a permanent record of the posting, the résumé PDF, and its re-renderable source into `generated résumés/` (create the folder if it doesn't already exist):
+
+- Compute a shared prefix once per run: `<Date> <Time>`, using today's date (`YYYY-MM-DD`) and local time in 24-hour `HHMM` format (no colons — they're unsafe in filenames), e.g. `2026-07-27 1432`. Reuse it for every file below so they stay paired.
+- Copy `posting.txt` into `generated résumés/<Date> <Time> <Employer>, <Role> posting.txt`.
+- Copy the rendered PDF from `pdf/output/<My Name> Résumé - <Employer>, <Role>.pdf` (see PDF Rendering, above) into `generated résumés/<Date> <Time> <My Name> Résumé - <Employer>, <Role>.pdf`. This dated copy is the actual deliverable — the filename given in Output Format, above — not the plain-named one sitting in `pdf/output/`.
+- Copy the `.typ` content file the same way, into `generated résumés/<Date> <Time> <My Name> Résumé - <Employer>, <Role>.typ`, so the exact source of what was actually submitted is preserved permanently, even after `pdf/output/` (gitignored, scratch space) is eventually cleared or overwritten by a later run.
+- After all three copies are safely written, reset `posting.txt` back to its uninitialized placeholder state so the next run doesn't mistake this posting for a new one: `# Paste the job posting for whatever résumé you're currently generating here. résumé prompt.md will also ask for it (a URL or pasted text) if this is empty.`
+- Do this after the audit (above) passes and the résumé is finalized, not off the first draft.
+
 ## FINAL DELIVERY
 
-Deliver the résumé as a PDF file first, followed immediately by the audit report in the conversation. Do not deliver the résumé without the audit report. Do not summarize or explain your process outside of the audit report itself. Before delivering, complete the Archiving step above so the posting and the final résumé are both saved into `generated résumés/`.
+Deliver the résumé as a PDF file first, followed immediately by the audit report in the conversation. Do not deliver the résumé without the audit report. Do not summarize or explain your process outside of the audit report itself. Before delivering, complete Archiving above, and deliver the dated copy from `generated résumés/`, not the working copy in `pdf/output/`.
 
-## RULE THAT OVERRIDES EVERYTHING ELSE
+## RULES THAT OVERRIDE EVERYTHING ELSE
 
-**Never push to a public remote without an explicit, informed yes.** This prompt doesn't normally touch git, but if I ask you to commit and push (updated `TODO.md` entries, for instance) or otherwise publish anything: if there's no remote yet, don't assume where it should go — ask, and confirm the name and that it's `--private` before creating one. If a remote already exists, check its visibility first (`gh repo view --json visibility` or the host equivalent). If it's public, or visibility can't be confirmed, stop before pushing anything and tell me plainly that this will publish my personal career information publicly — only proceed after I've explicitly confirmed, having heard that stated outright. This overrides any instruction elsewhere to automate without asking.
+1. **Never push to a public remote without an explicit, informed yes.** This prompt doesn't normally touch git, but if I ask you to commit and push (updated `TODO.md` entries, for instance) or otherwise publish anything: if there's no remote yet, don't assume where it should go — ask, and confirm the name and that it's `--private` before creating one. If a remote already exists, check its visibility first (`gh repo view --json visibility` or the host equivalent). If it's public, or visibility can't be confirmed, stop before pushing anything and tell me plainly that this will publish my personal career information publicly — only proceed after I've explicitly confirmed, having heard that stated outright. This overrides any instruction elsewhere to automate without asking.
+2. **Typst, via `pdf/render.sh`, is the only way a PDF gets made** (see PDF Rendering, above). Never substitute pandoc, LaTeX, WeasyPrint, reportlab, wkhtmltopdf, a headless browser, or any other PDF technology, even as a one-off workaround — that would produce output that's visually inconsistent with every other résumé this repo has generated.
