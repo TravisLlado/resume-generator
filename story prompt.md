@@ -53,7 +53,7 @@ Items are marked **[NARRATIVE]** or **[ENUMERATED]**. The two tiers have differe
 - Timeline (start and end, at least to the quarter)
 - Location
 - Role/title (actual, not inflated)
-- At least one stakeholder identified by name or team
+- At least one stakeholder identified by title/role or team (e.g. "head of software," "validation manager," "release engineer" — not an individual's personal legal name; see Stakeholders note below)
 - Context: why the project existed
 - At least one obstacle or complication, and how it was resolved
 - At least one measurable or notable outcome
@@ -155,7 +155,9 @@ Role: [Actual title exactly as stated. Do not inflate.]
 
 [Stakeholders]
     [Who cared about this project? Internal teams, external partners, customers, sponsors.
-     Listed by name and role/organization where provided.]
+     Listed by title/role and team or organization where provided — e.g. "head of software,"
+     "validation manager," "release engineer" — not by an individual's personal legal name.
+     It's unusual to put someone else's name on your résumé, so capture the position, not the person.]
 
 [Context & Problem Statement]
     [Why the project existed. What was broken, missing, or needed.
