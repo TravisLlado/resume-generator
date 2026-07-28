@@ -14,7 +14,7 @@ Tell the user so, then **reconcile `stories/INDEX.md`** against the actual dated
 
 Don't reconcile the "Reference Files" table here — that's `résumé prompt.md`'s job, since it's the one that actually reads those files before drafting.
 
-Also check `stories/TODO.md` — if it has open items, mention how many, but don't read them all aloud; that's for `story prompt.md` and `résumé prompt.md` to act on when relevant.
+Also check the `Notes` column of the main table and the "Coverage Gaps" table — if either has open items, mention how many, but don't read them all aloud; that's for `story prompt.md` and `résumé prompt.md` to act on when relevant.
 
 **Also verify the PDF toolchain**, since it's possible this repo was set up before that existed, or on a different machine than the one you're on now: run `typst --version && ls pdf/template.typ pdf/render.sh pdf/smoke-test.typ`. If anything is missing or `typst` isn't found, run **PHASE 3.5 — PDF TOOLCHAIN SETUP** below before continuing. If everything is already present, skip it.
 
@@ -38,7 +38,7 @@ Most people already have a résumé and are thinking "tailor this to a job," not
 Everything here is local. Nothing gets pushed anywhere during setup — if a remote happens to already exist on this repo and the user wants to push later, that's governed by Rule 1 below, not by anything in this phase.
 
 1. The reference-file placeholders (`Contact Info.md`, `Résumé Preferences.md`, `Education.md`, `Skills.md`, `Glossary.md`, `Publications and Presentations.md`, `Amateur Training and Experience.md`) already live in `stories/` as part of this repo template — nothing to copy. Just confirm they're present; if one is missing, that's unexpected drift, so flag it rather than silently recreating it.
-2. Create `stories/INDEX.md`, header and an empty table, no dated-file rows yet, plus a second table listing every reference file as `Uninitialized`:
+2. Create `stories/INDEX.md`, header and an empty table, no dated-file rows yet, plus a second table listing every reference file as `Uninitialized`, plus an empty "Coverage Gaps" table:
    ````
    # Story Index
 
@@ -46,13 +46,16 @@ Everything here is local. Nothing gets pushed anywhere during setup — if a rem
    indexed in this table — only dated files. `Status` is `Done` (a full entry
    exists as a file in stories/) or `Pending` (a candidate extracted from a
    résumé, filename reserved, not yet interviewed — see init prompt.md and story
-   prompt.md). Maintained by story prompt.md, résumé prompt.md, and init
+   prompt.md). `Notes` holds unresolved issues for that story — contradictions,
+   uncertain details, or undefined terms noted when the entry was written — one
+   line per issue, cleared by deleting it once resolved; blank when nothing is
+   outstanding. Maintained by story prompt.md, résumé prompt.md, and init
    prompt.md — if stories/ is hand-edited (a dated file added, deleted, or
    renamed) without updating this, the next one of those to run will catch the
    mismatch and ask how to reconcile it, rather than silently drifting.
 
-   | File | Summary | Status |
-   |---|---|---|
+   | File | Summary | Status | Notes |
+   |---|---|---|---|
 
    ## Reference Files
 
@@ -74,30 +77,21 @@ Everything here is local. Nothing gets pushed anywhere during setup — if a rem
    | Glossary.md | Uninitialized |
    | Publications and Presentations.md | Uninitialized |
    | Amateur Training and Experience.md | Uninitialized |
+
+   ## Coverage Gaps
+
+   Requirements a job posting wanted that nothing in stories/ addresses — not
+   tied to any single story. Added by résumé prompt.md's audit, and checked by
+   résumé prompt.md before drafting, so a known gap relevant to a new posting
+   gets surfaced instead of silently repeated. Cleared by deleting the row once
+   it's actually fixed (a new story, or an expanded existing one, covers it).
+
+   | Requirement | First Seen |
+   |---|---|
    ````
-3. Create `stories/TODO.md`, header only, no entries yet:
-   ```
-   # Open Items
-
-   A running to-do list of known gaps and loose ends across stories/ — not a full
-   version history, just things known to be unfinished. Building this archive out
-   happens across many sessions, sometimes months apart; anything left unresolved
-   only in a conversation's history is effectively lost once that conversation
-   ends, so it lives here instead. Two kinds of entry, each `- [ ] ...`, cleared by
-   deleting the line once resolved:
-
-   ## Unresolved in existing stories
-   Contradictions, uncertain details, or undefined terms noted when a story was
-   written. Added by story prompt.md at delivery.
-
-   ## Coverage gaps noticed while generating a résumé
-   Requirements a job posting wanted that nothing in stories/ addresses. Added by
-   résumé prompt.md's audit, and checked by résumé prompt.md before drafting, so a
-   known gap relevant to a new posting gets surfaced instead of silently repeating.
-   ```
-4. `posting.txt` at the top level of the repo already exists as part of this repo template, with a one-line comment explaining it holds the job posting for whatever résumé is currently being generated — nothing to create. Just confirm it's present; if it's missing, that's unexpected drift, so flag it rather than silently recreating it.
-5. **Do not interview the user to fill in the reference files.** Answering short structured fields (name, email, a list of schools) one at a time through conversation is slow and tedious compared to just editing a file — leave the reference-file placeholders as they are and tell the user in Phase 5 to fill them in directly in their own editor. The conversational interview (`story prompt.md`) is reserved for narrative content that's genuinely hard to write cold — individual jobs and projects — not for simple reference fields like these.
-6. Commit locally (`git add -A && git commit -m "Initial setup"`). Do not push. There is nothing to push to unless the user already has a remote and asks — see Rule 1.
+3. `posting.txt` at the top level of the repo already exists as part of this repo template, with a one-line comment explaining it holds the job posting for whatever résumé is currently being generated — nothing to create. Just confirm it's present; if it's missing, that's unexpected drift, so flag it rather than silently recreating it.
+4. **Do not interview the user to fill in the reference files.** Answering short structured fields (name, email, a list of schools) one at a time through conversation is slow and tedious compared to just editing a file — leave the reference-file placeholders as they are and tell the user in Phase 5 to fill them in directly in their own editor. The conversational interview (`story prompt.md`) is reserved for narrative content that's genuinely hard to write cold — individual jobs and projects — not for simple reference fields like these.
+5. Commit locally (`git add -A && git commit -m "Initial setup"`). Do not push. There is nothing to push to unless the user already has a remote and asks — see Rule 1.
 
 Then go to **PHASE 3.5 — PDF TOOLCHAIN SETUP**. It runs either way, regardless of which path was chosen in Phase 2.
 
