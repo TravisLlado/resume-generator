@@ -303,13 +303,12 @@ AUDIT REPORT
 
 ## ARCHIVING
 
-Every time a résumé is generated, save a permanent record of the posting, the résumé PDF, and its re-renderable source into `generated résumés/` (create the folder if it doesn't already exist):
+Every time a résumé is generated, save a permanent record of the posting and the résumé PDF into `generated résumés/` (create the folder if it doesn't already exist). Everything else — the `.typ` content file, preview PNGs, and any other work-in-progress artifact — stays in `pdf/output/` (gitignored scratch space) and is never copied here:
 
 - Compute a shared prefix once per run: `<Date> <Time>`, using today's date (`YYYY-MM-DD`) and local time in 24-hour `HHMM` format (no colons — they're unsafe in filenames), e.g. `2026-07-27 1432`. Reuse it for every file below so they stay paired.
 - Copy `posting.txt` into `generated résumés/<Date> <Time> <Employer>, <Role> posting.txt`.
 - Copy the rendered PDF from `pdf/output/<My Name> Résumé - <Employer>, <Role>.pdf` (see PDF Rendering, above) into `generated résumés/<Date> <Time> <My Name> Résumé - <Employer>, <Role>.pdf`. This dated copy is the actual deliverable — the filename given in Output Format, above — not the plain-named one sitting in `pdf/output/`.
-- Copy the `.typ` content file the same way, into `generated résumés/<Date> <Time> <My Name> Résumé - <Employer>, <Role>.typ`, so the exact source of what was actually submitted is preserved permanently, even after `pdf/output/` (gitignored, scratch space) is eventually cleared or overwritten by a later run.
-- After all three copies are safely written, reset `posting.txt` back to its uninitialized placeholder state so the next run doesn't mistake this posting for a new one: `# Paste the job posting for whatever résumé you're currently generating here. résumé prompt.md will also ask for it (a URL or pasted text) if this is empty.`
+- After both copies are safely written, reset `posting.txt` back to its uninitialized placeholder state so the next run doesn't mistake this posting for a new one: `# Paste the job posting for whatever résumé you're currently generating here. résumé prompt.md will also ask for it (a URL or pasted text) if this is empty.`
 - Do this after the audit (above) passes and the résumé is finalized, not off the first draft.
 
 ## FINAL DELIVERY
