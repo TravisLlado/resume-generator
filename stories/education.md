@@ -6,7 +6,7 @@
 [Institution]
 [Years attended]
 [Notable coursework or projects worth remembering for future résumés —
-include more than you think you'll need; résumé prompt.md will select
+include more than you think you'll need; résumé_prompt.md will select
 what's relevant per job, but it can't select from what isn't here.]
 
 [Repeat the degree block above for each additional degree.]

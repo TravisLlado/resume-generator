@@ -10,7 +10,7 @@ Do not explain your process. Do not summarize these instructions back to me. Do 
 
 ## PHASE 1 — OPENING
 
-**First, check `stories/INDEX.md` for rows with Status `Pending`.** These are candidate stories extracted from a résumé by `init prompt.md`, not yet fully captured. If there are any, tell me how many are pending and ask whether I want to work through one now or dictate something new. If I pick a pending row:
+**First, check `stories/index.md` for rows with Status `Pending`.** These are candidate stories extracted from a résumé by `init_prompt.md`, not yet fully captured. If there are any, tell me how many are pending and ask whether I want to work through one now or dictate something new. If I pick a pending row:
 
 - Treat its existing summary as the starting context, equivalent to what I'd have said in response to the opening question below. Do not ask that opening question for this entry — go straight to **PHASE 3 — FOLLOW-UP QUESTIONS** using the summary as the starting point against the coverage checklist. A résumé bullet is compressed by nature: expect most `[ENUMERATED]` items and a lot of `[NARRATIVE]` depth to be genuinely uncovered. Don't assume the summary implies coverage of anything it doesn't explicitly state.
 - Use the filename already reserved in that row at delivery (Phase 5) — don't pick a new one.
@@ -236,11 +236,11 @@ If the audit finds problems, fix them before delivery. If it finds things you ca
 
 ## PHASE 5 — DELIVERY
 
-Write the finished entry to a new file in the `stories/` folder. If this entry came from a `Pending` row in `stories/INDEX.md` (Phase 1), use the filename already reserved there. Otherwise, list the folder first to see the naming pattern already in use and to avoid colliding with an existing filename, then name the file `YYYY-MM Employer ProjectName.md`, using the project's start date (year and month if known, year alone if the month wasn't given) and the employer name — e.g. `2022-01 Acme Corp Widget Redesign.md`. For a personal project with no employer, drop the employer and use `YYYY ProjectName.md` — e.g. `2015 Backyard Greenhouse Automation.md`.
+Write the finished entry to a new file in the `stories/` folder. If this entry came from a `Pending` row in `stories/index.md` (Phase 1), use the filename already reserved there. Otherwise, list the folder first to see the naming pattern already in use and to avoid colliding with an existing filename, then name the file `YYYY-MM_employer_project_name.md` (snake_case: lowercase, words joined by underscores), using the project's start date (year and month if known, year alone if the month wasn't given) and the employer name — e.g. `2022-01_acme_corp_widget_redesign.md`. For a personal project with no employer, drop the employer and use `YYYY_project_name.md` — e.g. `2015_backyard_greenhouse_automation.md`.
 
-**Reconcile and update `stories/INDEX.md`.** This is a table — File, Summary, Status — that `résumé prompt.md` and `init prompt.md` rely on to stay in sync with what's actually in `stories/`. Before adding anything:
-- List every dated file already in `stories/` (filenames starting with a year) and compare against `INDEX.md`'s rows. Every dated file should have a `Done` row; every `Done` row should have a matching file; `Pending` rows shouldn't have a file yet. Flag any mismatch and ask how to resolve it (summarize an unindexed file, drop a stale row, fix a rename) rather than guessing or silently fixing it.
-- If `INDEX.md` doesn't exist yet, create it — indexing every dated file already in `stories/` as `Done`, not just the one you're adding.
+**Reconcile and update `stories/index.md`.** This is a table — File, Summary, Status — that `résumé_prompt.md` and `init_prompt.md` rely on to stay in sync with what's actually in `stories/`. Before adding anything:
+- List every dated file already in `stories/` (filenames starting with a year) and compare against `index.md`'s rows. Every dated file should have a `Done` row; every `Done` row should have a matching file; `Pending` rows shouldn't have a file yet. Flag any mismatch and ask how to resolve it (summarize an unindexed file, drop a stale row, fix a rename) rather than guessing or silently fixing it.
+- If `index.md` doesn't exist yet, create it — indexing every dated file already in `stories/` as `Done`, not just the one you're adding.
 - If this entry came from a `Pending` row, flip that row's Status to `Done` in place. Otherwise, add a new row, Status `Done`, inserted in the correct position (newest first, by the file's date prefix).
 
 Tell me the filename you wrote and say something to the effect of: "Here's the project history entry. Let me know if anything needs correction or addition."
@@ -248,9 +248,9 @@ Tell me the filename you wrote and say something to the effect of: "Here's the p
 Then note any unresolved issues:
 - Contradictions you couldn't resolve
 - Details you're uncertain about (possible transcription errors from voice dictation)
-- Company-specific terms or acronyms that may need definitions added to `stories/Glossary.md`
+- Company-specific terms or acronyms that may need definitions added to `stories/glossary.md`
 
-**If there are any, also write them into this file's `Notes` cell in `stories/INDEX.md`** (one line per issue) — not just mentioned in this conversation. This process can span days or months across many sessions; an issue that only exists in this conversation's history is one I'll never see again.
+**If there are any, also write them into this file's `Notes` cell in `stories/index.md`** (one line per issue) — not just mentioned in this conversation. This process can span days or months across many sessions; an issue that only exists in this conversation's history is one I'll never see again.
 
 If I request changes, revise the entry and overwrite the file. Repeat until I'm satisfied.
 
@@ -265,7 +265,7 @@ If I request changes, revise the entry and overwrite the file. Repeat until I'm 
 5. **Never invent.** A missing detail can be filled in by asking. An invented detail is a lie.
 6. **Preserve my voice.** Factual. Technical. Specific. No flair, no narrative drama, no jargon.
 7. **Skills & Tools is never blank.** If the Skills & Tools section of the final entry is empty or sparse, the interview is incomplete by definition — go back and ask. A substantial engineering project cannot have used zero tools. An empty Skills & Tools section at delivery is proof of interview failure, not proof that there was nothing to capture.
-8. **Never let `INDEX.md` silently drift from reality.** Reconcile it against the actual files in `stories/` every time you touch that folder, and surface any mismatch instead of fixing it quietly.
+8. **Never let `index.md` silently drift from reality.** Reconcile it against the actual files in `stories/` every time you touch that folder, and surface any mismatch instead of fixing it quietly.
 9. **A `Pending` row's summary is a starting point, not a finished coverage claim.** It came from a compressed résumé bullet — treat everything it doesn't explicitly state as uncovered, same as if I'd said nothing about it at all. The full checklist and audit still apply in full; a pending entry does not get a lighter interview than one started from scratch.
-10. **Unresolved issues live in `stories/INDEX.md`'s `Notes` column, not just in this conversation.** Building out `stories/` happens across many sessions, sometimes over months. Anything left unresolved that isn't written down somewhere durable is effectively lost the moment this conversation ends.
+10. **Unresolved issues live in `stories/index.md`'s `Notes` column, not just in this conversation.** Building out `stories/` happens across many sessions, sometimes over months. Anything left unresolved that isn't written down somewhere durable is effectively lost the moment this conversation ends.
 11. **Never push to a public remote without an explicit, informed yes — at any point, not just during setup.** If I ask you to commit and push, or otherwise publish anything: if there's no remote yet, don't assume where it should go — ask, and confirm the name and that it's `--private` before creating one. If a remote already exists, check its visibility first (`gh repo view --json visibility` or the host equivalent). If it's public, or visibility can't be confirmed, stop before pushing anything and tell me plainly that this will publish my personal career information publicly — only proceed after I've explicitly confirmed, having heard that stated outright. This overrides every other instruction here about automating without asking.

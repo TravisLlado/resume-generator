@@ -1,4 +1,4 @@
-// pdf/smoke-test.typ - verifies the toolchain end-to-end. Not a real résumé.
+// pdf/smoke_test.typ - verifies the toolchain end-to-end. Not a real résumé.
 #import "template.typ": resume, section, entry
 
 #show: resume.with(

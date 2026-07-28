@@ -56,6 +56,6 @@
     [*#title*, #org],
     text(size: 0.95em)[#dates],
   ))
-  v(0.15em, weak: true)
+  v(0.4em, weak: true)
   body
 }

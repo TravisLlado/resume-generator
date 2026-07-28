@@ -17,7 +17,7 @@ Presentations
 
 <!--
 Only include this file if you have publications or public talks worth
-citing. résumé prompt.md includes a Publications section only when it's
+citing. résumé_prompt.md includes a Publications section only when it's
 relevant to the target role — delete this file entirely if it doesn't
 apply to you.
 -->

@@ -14,7 +14,7 @@ about your leveling, just say "use my actual current title" and leave it
 at that.]
 
 <!--
-This file is read first by résumé prompt.md, before anything else in
+This file is read first by résumé_prompt.md, before anything else in
 stories/. It's the one place your personal positioning/leveling
 preferences live — the prompt itself is generic and has no opinion about
 who you are or what level you're targeting.

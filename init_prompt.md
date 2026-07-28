@@ -8,15 +8,15 @@ Do not explain these instructions back to the user. Just begin.
 
 ## PHASE 1 — CHECK IF ALREADY SET UP
 
-Does `stories/INDEX.md` already exist? If so, this has already been run.
+Does `stories/index.md` already exist? If so, this has already been run.
 
-Tell the user so, then **reconcile `stories/INDEX.md`** against the actual dated files before doing anything else. List every dated file (filenames starting with a year) and compare against `INDEX.md`'s main table rows. Every dated file on disk should have a row with Status `Done`; every `Done` row should have a matching file; `Pending` rows (candidates from a résumé bootstrap, reserved but not yet interviewed) should *not* have a file yet. Flag any mismatch and ask how to resolve it (summarize an unindexed file, drop a stale row, fix a rename) rather than guessing or fixing it silently.
+Tell the user so, then **reconcile `stories/index.md`** against the actual dated files before doing anything else. List every dated file (filenames starting with a year) and compare against `index.md`'s main table rows. Every dated file on disk should have a row with Status `Done`; every `Done` row should have a matching file; `Pending` rows (candidates from a résumé bootstrap, reserved but not yet interviewed) should *not* have a file yet. Flag any mismatch and ask how to resolve it (summarize an unindexed file, drop a stale row, fix a rename) rather than guessing or fixing it silently.
 
-Don't reconcile the "Reference Files" table here — that's `résumé prompt.md`'s job, since it's the one that actually reads those files before drafting.
+Don't reconcile the "Reference Files" table here — that's `résumé_prompt.md`'s job, since it's the one that actually reads those files before drafting.
 
-Also check the `Notes` column of the main table and the "Coverage Gaps" table — if either has open items, mention how many, but don't read them all aloud; that's for `story prompt.md` and `résumé prompt.md` to act on when relevant.
+Also check the `Notes` column of the main table and the "Coverage Gaps" table — if either has open items, mention how many, but don't read them all aloud; that's for `story_prompt.md` and `résumé_prompt.md` to act on when relevant.
 
-**Also verify the PDF toolchain**, since it's possible this repo was set up before that existed, or on a different machine than the one you're on now: run `typst --version && ls pdf/template.typ pdf/render.sh pdf/smoke-test.typ`. If anything is missing or `typst` isn't found, run **PHASE 3.5 — PDF TOOLCHAIN SETUP** below before continuing. If everything is already present, skip it.
+**Also verify the PDF toolchain**, since it's possible this repo was set up before that existed, or on a different machine than the one you're on now: run `typst --version && ls pdf/template.typ pdf/render.sh pdf/smoke_test.typ`. If anything is missing or `typst` isn't found, run **PHASE 3.5 — PDF TOOLCHAIN SETUP** below before continuing. If everything is already present, skip it.
 
 Once reconciled, skip straight to **PHASE 5 — HANDOFF**. Do not otherwise re-run setup or overwrite existing data.
 
@@ -37,22 +37,23 @@ Most people already have a résumé and are thinking "tailor this to a job," not
 
 Everything here is local. Nothing gets pushed anywhere during setup — if a remote happens to already exist on this repo and the user wants to push later, that's governed by Rule 1 below, not by anything in this phase.
 
-1. The reference-file placeholders (`Contact Info.md`, `Résumé Preferences.md`, `Education.md`, `Skills.md`, `Glossary.md`, `Publications and Presentations.md`, `Amateur Training and Experience.md`) already live in `stories/` as part of this repo template — nothing to copy. Just confirm they're present; if one is missing, that's unexpected drift, so flag it rather than silently recreating it.
-2. Create `stories/INDEX.md`, header and an empty table, no dated-file rows yet, plus a second table listing every reference file as `Uninitialized`, plus an empty "Coverage Gaps" table:
+1. The reference-file placeholders (`contact_info.md`, `résumé_preferences.md`, `education.md`, `skills.md`, `glossary.md`, `publications_and_presentations.md`, `amateur_training_and_experience.md`) already live in `stories/` as part of this repo template — nothing to copy. Just confirm they're present; if one is missing, that's unexpected drift, so flag it rather than silently recreating it.
+2. Create `stories/index.md`, header and an empty table, no dated-file rows yet, plus a second table listing every reference file as `Uninitialized`, plus an empty "Coverage Gaps" table:
    ````
    # Story Index
 
    One row per story, newest first. Reference files (no date prefix) aren't
    indexed in this table — only dated files. `Status` is `Done` (a full entry
    exists as a file in stories/) or `Pending` (a candidate extracted from a
-   résumé, filename reserved, not yet interviewed — see init prompt.md and story
-   prompt.md). `Notes` holds unresolved issues for that story — contradictions,
-   uncertain details, or undefined terms noted when the entry was written — one
-   line per issue, cleared by deleting it once resolved; blank when nothing is
-   outstanding. Maintained by story prompt.md, résumé prompt.md, and init
-   prompt.md — if stories/ is hand-edited (a dated file added, deleted, or
-   renamed) without updating this, the next one of those to run will catch the
-   mismatch and ask how to reconcile it, rather than silently drifting.
+   résumé, filename reserved, not yet interviewed — see init_prompt.md and
+   story_prompt.md). `Notes` holds unresolved issues for that story —
+   contradictions, uncertain details, or undefined terms noted when the entry
+   was written — one line per issue, cleared by deleting it once resolved;
+   blank when nothing is outstanding. Maintained by story_prompt.md,
+   résumé_prompt.md, and init_prompt.md — if stories/ is hand-edited (a dated
+   file added, deleted, or renamed) without updating this, the next one of
+   those to run will catch the mismatch and ask how to reconcile it, rather
+   than silently drifting.
 
    | File | Summary | Status | Notes |
    |---|---|---|---|
@@ -64,25 +65,25 @@ Everything here is local. Nothing gets pushed anywhere during setup — if a rem
    actually been filled in yet or is still the bracketed `[...]` placeholder
    text that ships with this repo template. `Status` is `Uninitialized` (still
    placeholder text) or `Filled In` (edited with real information). Checked and
-   updated by résumé prompt.md whenever it reads these files before drafting —
+   updated by résumé_prompt.md whenever it reads these files before drafting —
    if a file no longer matches its placeholder, its row is flipped to
    `Filled In` rather than left stale.
 
    | File | Status |
    |---|---|
-   | Contact Info.md | Uninitialized |
-   | Résumé Preferences.md | Uninitialized |
-   | Education.md | Uninitialized |
-   | Skills.md | Uninitialized |
-   | Glossary.md | Uninitialized |
-   | Publications and Presentations.md | Uninitialized |
-   | Amateur Training and Experience.md | Uninitialized |
+   | contact_info.md | Uninitialized |
+   | résumé_preferences.md | Uninitialized |
+   | education.md | Uninitialized |
+   | skills.md | Uninitialized |
+   | glossary.md | Uninitialized |
+   | publications_and_presentations.md | Uninitialized |
+   | amateur_training_and_experience.md | Uninitialized |
 
    ## Coverage Gaps
 
    Requirements a job posting wanted that nothing in stories/ addresses — not
-   tied to any single story. Added by résumé prompt.md's audit, and checked by
-   résumé prompt.md before drafting, so a known gap relevant to a new posting
+   tied to any single story. Added by résumé_prompt.md's audit, and checked by
+   résumé_prompt.md before drafting, so a known gap relevant to a new posting
    gets surfaced instead of silently repeated. Cleared by deleting the row once
    it's actually fixed (a new story, or an expanded existing one, covers it).
 
@@ -90,7 +91,7 @@ Everything here is local. Nothing gets pushed anywhere during setup — if a rem
    |---|---|
    ````
 3. `posting.txt` at the top level of the repo already exists as part of this repo template, with a one-line comment explaining it holds the job posting for whatever résumé is currently being generated — nothing to create. Just confirm it's present; if it's missing, that's unexpected drift, so flag it rather than silently recreating it.
-4. **Do not interview the user to fill in the reference files.** Answering short structured fields (name, email, a list of schools) one at a time through conversation is slow and tedious compared to just editing a file — leave the reference-file placeholders as they are and tell the user in Phase 5 to fill them in directly in their own editor. The conversational interview (`story prompt.md`) is reserved for narrative content that's genuinely hard to write cold — individual jobs and projects — not for simple reference fields like these.
+4. **Do not interview the user to fill in the reference files.** Answering short structured fields (name, email, a list of schools) one at a time through conversation is slow and tedious compared to just editing a file — leave the reference-file placeholders as they are and tell the user in Phase 5 to fill them in directly in their own editor. The conversational interview (`story_prompt.md`) is reserved for narrative content that's genuinely hard to write cold — individual jobs and projects — not for simple reference fields like these.
 5. Commit locally (`git add -A && git commit -m "Initial setup"`). Do not push. There is nothing to push to unless the user already has a remote and asks — see Rule 1.
 
 Then go to **PHASE 3.5 — PDF TOOLCHAIN SETUP**. It runs either way, regardless of which path was chosen in Phase 2.
@@ -99,14 +100,14 @@ Then go to **PHASE 3.5 — PDF TOOLCHAIN SETUP**. It runs either way, regardless
 
 ## PHASE 3.5 — PDF TOOLCHAIN SETUP
 
-This is what turns a drafted résumé into an actual PDF file. Set it up now, once, so `résumé prompt.md` never has to improvise a PDF tool mid-run later. Follow this exactly. Do not substitute a different PDF technology (no LaTeX, no pandoc, no WeasyPrint, no reportlab, no wkhtmltopdf, no headless browsers) even if installing Typst hits a snag — work through the Troubleshooting list below instead, and if it's still unresolved, stop and tell the user rather than improvising an alternative. Every résumé this repo ever produces should come out of this one pipeline, so output stays consistent across machines and sessions.
+This is what turns a drafted résumé into an actual PDF file. Set it up now, once, so `résumé_prompt.md` never has to improvise a PDF tool mid-run later. Follow this exactly. Do not substitute a different PDF technology (no LaTeX, no pandoc, no WeasyPrint, no reportlab, no wkhtmltopdf, no headless browsers) even if installing Typst hits a snag — work through the Troubleshooting list below instead, and if it's still unresolved, stop and tell the user rather than improvising an alternative. Every résumé this repo ever produces should come out of this one pipeline, so output stays consistent across machines and sessions.
 
 ### Overview
 
 The toolchain is **Typst**, a modern typesetting system distributed as a single static binary with zero runtime dependencies. Division of labor:
 
 - **Layout** lives in `pdf/template.typ`, committed to the repo, never edited when generating an actual résumé later.
-- **Content** is written per-run as a `.typ` file in `pdf/output/` (that happens in `résumé prompt.md`, not here).
+- **Content** is written per-run as a `.typ` file in `pdf/output/` (that happens in `résumé_prompt.md`, not here).
 - **Rendering** is done by `pdf/render.sh`, which compiles a content file to PDF and also exports every page as a PNG so length and appearance can be checked visually.
 
 Four steps: (1) install the `typst` binary, (2) create the committed toolchain files if missing, (3) run the smoke test, (4) commit locally.
@@ -160,7 +161,7 @@ typst --version
 
 ### Step 2 — Create the committed toolchain files
 
-Check whether `pdf/template.typ`, `pdf/render.sh`, and `pdf/smoke-test.typ` already exist (they may already be committed as part of this template). Create only what's missing, with exactly the contents below — do not "improve" or restyle them.
+Check whether `pdf/template.typ`, `pdf/render.sh`, and `pdf/smoke_test.typ` already exist (they may already be committed as part of this template). Create only what's missing, with exactly the contents below — do not "improve" or restyle them.
 
 #### File: `pdf/template.typ`
 
@@ -267,10 +268,10 @@ After creating it: `chmod +x pdf/render.sh`.
 
 The script is invoked as `bash pdf/render.sh ...`, which works on macOS, Linux, and Windows under Git Bash. If `bash` is genuinely unavailable, the script's two `typst compile` commands can be run directly instead, but then the em-dash grep check must be done manually before compiling.
 
-#### File: `pdf/smoke-test.typ`
+#### File: `pdf/smoke_test.typ`
 
 ```typst
-// pdf/smoke-test.typ - verifies the toolchain end-to-end. Not a real résumé.
+// pdf/smoke_test.typ - verifies the toolchain end-to-end. Not a real résumé.
 #import "template.typ": resume, section, entry
 
 #show: resume.with(
@@ -293,7 +294,7 @@ the toolchain is functional.
 #entry("B.S. Existence", "University of Smoke Tests", "2020")[]
 ```
 
-Note the header comment above uses a plain hyphen, not an em-dash — `render.sh`'s em-dash check scans the whole file, including comments, so an em-dash anywhere in this file (even one describing the file) would make the smoke test fail its own check. Also note `contact-line` is a plain string with no backslash-escaping (see the note on string arguments in `résumé prompt.md`'s PDF Rendering section) — only the bulleted body text below it is markup that needs escaping.
+Note the header comment above uses a plain hyphen, not an em-dash — `render.sh`'s em-dash check scans the whole file, including comments, so an em-dash anywhere in this file (even one describing the file) would make the smoke test fail its own check. Also note `contact-line` is a plain string with no backslash-escaping (see the note on string arguments in `résumé_prompt.md`'s PDF Rendering section) — only the bulleted body text below it is markup that needs escaping.
 
 #### `.gitignore` addition
 
@@ -302,30 +303,30 @@ grep -qx 'pdf/output/' .gitignore || echo 'pdf/output/' >> .gitignore
 mkdir -p pdf/output
 ```
 
-Generated résumés contain the user's personal information assembled per-application; `pdf/output/` is scratch/working space, not a source, and stays out of version control by default. (The permanent, committed record of each application lives in `generated résumés/` instead — see `résumé prompt.md`'s Archiving section.)
+Generated résumés contain the user's personal information assembled per-application; `pdf/output/` is scratch/working space, not a source, and stays out of version control by default. (The permanent, committed record of each application lives in `generated_résumés/` instead — see `résumé_prompt.md`'s Archiving section.)
 
 ### Step 3 — Run the smoke test
 
 ```bash
 cd pdf
-bash render.sh smoke-test.typ
+bash render.sh smoke_test.typ
 cd ..
 ```
 
 Then verify, in order:
 
 1. The command exited 0 and printed a PDF path and at least one preview PNG path.
-2. **View `pdf/smoke-test-preview-1.png`** with the image-viewing tool and confirm visually: centered bold name at top, contact line under it with a clean `test@example.com` (no stray backslash), uppercase section headers with rules, a job entry with title/org on the left and dates on the right, round bullets, and the special characters `C#`, `100%`, `$1M`, `R&D` rendered literally.
+2. **View `pdf/smoke_test-preview-1.png`** with the image-viewing tool and confirm visually: centered bold name at top, contact line under it with a clean `test@example.com` (no stray backslash), uppercase section headers with rules, a job entry with title/org on the left and dates on the right, round bullets, and the special characters `C#`, `100%`, `$1M`, `R&D` rendered literally.
 3. A compiler warning about unknown font family "georgia" or "noto serif" is normal and expected on machines without those fonts (Typst falls back to bundled Libertinus Serif) — not an error, no fix needed.
 
 Clean up the smoke test artifacts afterward, keeping the `.typ` source:
 ```bash
-rm -f pdf/smoke-test.pdf pdf/smoke-test-preview-*.png
+rm -f pdf/smoke_test.pdf pdf/smoke_test-preview-*.png
 ```
 
 ### Step 4 — Commit
 
-Commit `pdf/template.typ`, `pdf/render.sh`, `pdf/smoke-test.typ`, and the `.gitignore` change locally. Do not push — same standing rule as everywhere else in this prompt (see Rule 1).
+Commit `pdf/template.typ`, `pdf/render.sh`, `pdf/smoke_test.typ`, and the `.gitignore` change locally. Do not push — same standing rule as everywhere else in this prompt (see Rule 1).
 
 ### Troubleshooting
 
@@ -333,7 +334,7 @@ Commit `pdf/template.typ`, `pdf/render.sh`, `pdf/smoke-test.typ`, and the `.giti
 - **`winget`/`brew`/`snap` not available:** use the direct binary download method in Step 1. Don't install a package manager just for this.
 - **GitHub release download fails (offline/blocked network):** tell the user Typst couldn't be installed and that network access may need to change. Do not fall back to another PDF technology.
 - **PNG export errors about the output pattern:** very old Typst used `{n}` instead of `{p}` for the page placeholder — upgrade Typst to ≥ 0.12 rather than editing the script.
-- **Compilation error pointing at a line/column:** a content problem, not a toolchain problem — read the message and fix that line. Common cause: an unescaped special character in markup body text (see `résumé prompt.md`'s escaping table).
+- **Compilation error pointing at a line/column:** a content problem, not a toolchain problem — read the message and fix that line. Common cause: an unescaped special character in markup body text (see `résumé_prompt.md`'s escaping table).
 - **`Permission denied` running render.sh:** invoke as `bash pdf/render.sh ...` (no execute bit needed) or re-run `chmod +x pdf/render.sh`.
 
 ### Rules that override convenience
@@ -354,9 +355,9 @@ Commit `pdf/template.typ`, `pdf/render.sh`, `pdf/smoke-test.typ`, and the `.giti
 
    > Do you want one candidate story per employer/role, or one per distinct project within each role?
 
-   Most people will think in terms of employers/roles first, since that's how a résumé itself is organized — that's a fine, valid choice. But gently let them know the tradeoff before they decide: per-project, with as much detail as possible, tends to produce better résumés later, since `résumé prompt.md` can only select and recombine what's actually been captured as distinct, addressable stories. A role that spanned two unrelated efforts is genuinely two stories, not one. Don't push — state the tradeoff once, then go with whatever they pick.
+   Most people will think in terms of employers/roles first, since that's how a résumé itself is organized — that's a fine, valid choice. But gently let them know the tradeoff before they decide: per-project, with as much detail as possible, tends to produce better résumés later, since `résumé_prompt.md` can only select and recombine what's actually been captured as distinct, addressable stories. A role that spanned two unrelated efforts is genuinely two stories, not one. Don't push — state the tradeoff once, then go with whatever they pick.
 
-3. **Extract candidate stories at the chosen granularity.** Per-role: one candidate per distinct employer/role. Per-project: one candidate per distinct project or effort described within each role, even where the résumé groups several under a single job entry. Either way, don't invent or infer detail beyond what the résumé actually states — a résumé bullet is a compressed summary, not a source of new facts; deep detail is the interview's job (`story prompt.md`'s follow-up questions), not extraction's.
+3. **Extract candidate stories at the chosen granularity.** Per-role: one candidate per distinct employer/role. Per-project: one candidate per distinct project or effort described within each role, even where the résumé groups several under a single job entry. Either way, don't invent or infer detail beyond what the résumé actually states — a résumé bullet is a compressed summary, not a source of new facts; deep detail is the interview's job (`story_prompt.md`'s follow-up questions), not extraction's.
 
    For each candidate, determine:
    - Employer (if applicable) and a short project/role name
@@ -365,16 +366,16 @@ Commit `pdf/template.typ`, `pdf/render.sh`, `pdf/smoke-test.typ`, and the `.giti
 
 4. **Ask how they'd like to review the extracted list before it's locked in:**
 
-   > I've got N candidates. Want me to write them straight into `stories/INDEX.md` as `Pending` rows so you can review and edit them yourself — split, merge, drop, re-date, rename, whatever — then just tell me when you're done? Or would you rather go through the list together here in the conversation first?
+   > I've got N candidates. Want me to write them straight into `stories/index.md` as `Pending` rows so you can review and edit them yourself — split, merge, drop, re-date, rename, whatever — then just tell me when you're done? Or would you rather go through the list together here in the conversation first?
 
    Lead with the file option as the expected default — beyond a handful of candidates, a long list dumped into the conversation tends to come out formatted inconsistently and is tedious to correct through back-and-forth chat, where a plain markdown table is fast to edit directly by hand. But it's a genuine choice; some people would rather talk it through. Ask once, don't push, go with whichever they pick.
 
 5. **Write the candidates in, using the path they chose:**
 
-   - **File review (expected default).** Write every extracted candidate directly into `stories/INDEX.md` as a `Pending` row — no list shown in the conversation first. Use the same filename convention as everywhere else (`YYYY-MM Employer ProjectName.md` / `YYYY ProjectName.md`) to reserve each candidate's eventual filename. Commit locally (`git commit -m "Stage N candidate stories from résumé"`). Then tell the user, concisely: how many rows were added, and to open `stories/INDEX.md` directly in their editor to review it — add, remove, split, merge, re-date, rename, or reword summaries, whatever they want, since it's just a markdown table. Ask them to say when they're done (or "looks good" if no changes are needed). **Stop and wait for that response before continuing to Phase 5** — do not proceed on your own. When they return, re-read `stories/INDEX.md` to pick up whatever they actually changed; don't assume your original extraction is still what's there.
-   - **Conversation review.** Show the candidate list in the conversation — employer/role, date, summary, nothing more. Ask them to confirm, or adjust (split, merge, drop, re-date) before proceeding. Once confirmed, add the candidates to `stories/INDEX.md` as `Pending` rows using the same filename convention, and commit locally.
+   - **File review (expected default).** Write every extracted candidate directly into `stories/index.md` as a `Pending` row — no list shown in the conversation first. Use the same filename convention as everywhere else (`YYYY-MM_employer_project_name.md` / `YYYY_project_name.md`, snake_case) to reserve each candidate's eventual filename. Commit locally (`git commit -m "Stage N candidate stories from résumé"`). Then tell the user, concisely: how many rows were added, and to open `stories/index.md` directly in their editor to review it — add, remove, split, merge, re-date, rename, or reword summaries, whatever they want, since it's just a markdown table. Ask them to say when they're done (or "looks good" if no changes are needed). **Stop and wait for that response before continuing to Phase 5** — do not proceed on your own. When they return, re-read `stories/index.md` to pick up whatever they actually changed; don't assume your original extraction is still what's there.
+   - **Conversation review.** Show the candidate list in the conversation — employer/role, date, summary, nothing more. Ask them to confirm, or adjust (split, merge, drop, re-date) before proceeding. Once confirmed, add the candidates to `stories/index.md` as `Pending` rows using the same filename convention, and commit locally.
 
-6. **Do not create the dated story files yet**, either way. A résumé bullet is not a complete story — the row stays `Pending` until `story prompt.md` interviews it into one and flips the status to `Done`.
+6. **Do not create the dated story files yet**, either way. A résumé bullet is not a complete story — the row stays `Pending` until `story_prompt.md` interviews it into one and flips the status to `Done`.
 
 ---
 
@@ -382,16 +383,16 @@ Commit `pdf/template.typ`, `pdf/render.sh`, `pdf/smoke-test.typ`, and the `.giti
 
 Tell the user, concisely:
 - That everything so far is local only, nothing pushed anywhere.
-- That the reference files in `stories/` (`Contact Info.md`, `Résumé Preferences.md`, `Education.md`, `Skills.md`, `Glossary.md`, `Publications and Presentations.md`, `Amateur Training and Experience.md`) are still placeholders — tracked as `Uninitialized` in `stories/INDEX.md`'s "Reference Files" table — and the fastest way to fill them in is to just open and edit them directly — it's a handful of short structured fields, much faster by hand than dictating them here. They don't block getting started; fill them in whenever convenient. `résumé prompt.md` will flip each row to `Filled In` once it notices the file's actually been edited.
-- If Phase 4 ran: how many candidate stories are staged as `Pending` in `stories/INDEX.md`, extracted from their résumé, ready to be worked through one at a time via `story prompt.md`.
-- That `story prompt.md` captures a new job or project into `stories/` — that one's worth doing as a conversation, since narrative is harder to write cold — and `résumé prompt.md` drafts a tailored résumé once `posting.txt` and at least one story exist.
-- That the PDF toolchain (Phase 3.5) is set up and verified, so `résumé prompt.md` can produce a PDF without any extra setup when the time comes.
+- That the reference files in `stories/` (`contact_info.md`, `résumé_preferences.md`, `education.md`, `skills.md`, `glossary.md`, `publications_and_presentations.md`, `amateur_training_and_experience.md`) are still placeholders — tracked as `Uninitialized` in `stories/index.md`'s "Reference Files" table — and the fastest way to fill them in is to just open and edit them directly — it's a handful of short structured fields, much faster by hand than dictating them here. They don't block getting started; fill them in whenever convenient. `résumé_prompt.md` will flip each row to `Filled In` once it notices the file's actually been edited.
+- If Phase 4 ran: how many candidate stories are staged as `Pending` in `stories/index.md`, extracted from their résumé, ready to be worked through one at a time via `story_prompt.md`.
+- That `story_prompt.md` captures a new job or project into `stories/` — that one's worth doing as a conversation, since narrative is harder to write cold — and `résumé_prompt.md` drafts a tailored résumé once `posting.txt` and at least one story exist.
+- That the PDF toolchain (Phase 3.5) is set up and verified, so `résumé_prompt.md` can produce a PDF without any extra setup when the time comes.
 
 Then:
-- If there are `Pending` rows in `stories/INDEX.md`, ask if they'd like to start working through them now, beginning with the first. If yes, proceed directly into `story prompt.md` for that candidate, in this same conversation.
-- Otherwise, ask if they'd like to capture their first project right now, cold. If yes, proceed directly into Phase 1 of `story prompt.md` in this same conversation.
+- If there are `Pending` rows in `stories/index.md`, ask if they'd like to start working through them now, beginning with the first. If yes, proceed directly into `story_prompt.md` for that candidate, in this same conversation.
+- Otherwise, ask if they'd like to capture their first project right now, cold. If yes, proceed directly into Phase 1 of `story_prompt.md` in this same conversation.
 
-Either way, don't make them re-invoke `story prompt.md` separately.
+Either way, don't make them re-invoke `story_prompt.md` separately.
 
 ---
 
@@ -404,7 +405,7 @@ Either way, don't make them re-invoke `story prompt.md` separately.
    - If the remote is confirmed private: fine, proceed.
 
    This overrides every other instruction in this document about automating without asking — publishing personal data is the one action that never happens silently, no matter how it's triggered.
-2. **Idempotent.** If `stories/INDEX.md` already exists, do not re-run setup or overwrite existing data.
+2. **Idempotent.** If `stories/index.md` already exists, do not re-run setup or overwrite existing data.
 3. **Automate over ask** — except starting point (Phase 2), extraction granularity and review method (Phase 4, steps 2 and 4), and rule 1 above, which must always be asked; never default any of these without asking.
-4. **Never let `stories/INDEX.md`'s main table silently drift from reality.** Reconcile it against the actual dated files every time this prompt runs, whether setting up fresh or finding an existing setup, and surface any mismatch instead of fixing it quietly. (The "Reference Files" table is `résumé prompt.md`'s responsibility, not this prompt's — see Phase 1.)
-5. **Résumé extraction is conservative and always confirmed** — either by the user editing `stories/INDEX.md` directly, or by walking the list together in conversation, whichever they chose in Phase 4. Never invent detail beyond what the résumé states, and never treat extraction as final until the user has actually reviewed it one way or the other — if they chose the file route, that means waiting for them to say they're done, not moving on right after writing the rows. A résumé bullet becomes a `Pending` row, never a `Done` one — only `story prompt.md`'s interview produces those.
+4. **Never let `stories/index.md`'s main table silently drift from reality.** Reconcile it against the actual dated files every time this prompt runs, whether setting up fresh or finding an existing setup, and surface any mismatch instead of fixing it quietly. (The "Reference Files" table is `résumé_prompt.md`'s responsibility, not this prompt's — see Phase 1.)
+5. **Résumé extraction is conservative and always confirmed** — either by the user editing `stories/index.md` directly, or by walking the list together in conversation, whichever they chose in Phase 4. Never invent detail beyond what the résumé states, and never treat extraction as final until the user has actually reviewed it one way or the other — if they chose the file route, that means waiting for them to say they're done, not moving on right after writing the rows. A résumé bullet becomes a `Pending` row, never a `Done` one — only `story_prompt.md`'s interview produces those.

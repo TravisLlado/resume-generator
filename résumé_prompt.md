@@ -4,10 +4,10 @@ You are working inside a git repository, not a browser chat with attached files.
 
 - **posting.txt** — a job description for a role I am applying to.
 - **stories/** — my career history, as one markdown file per topic. The number of files will grow over time, so list the directory rather than assuming a fixed set of filenames. It contains three kinds of files:
-  - **Dated files** (filenames beginning with a year, e.g. `2022-01 Acme Corp Widget Redesign.md` or `2015 Backyard Greenhouse Automation.md`) — one per job, project, or personal project, each containing the accomplishments, scope, and skills for that entry.
-  - **Reference files** (no date prefix) — `Contact Info.md`, `Education.md`, `Skills.md`, `Glossary.md`, `Publications and Presentations.md`, `Amateur Training and Experience.md`, and `Résumé Preferences.md` — material that isn't tied to a single dated entry.
-  - **`INDEX.md`** — three tables. The main one (File, Summary, Status, Notes) covers dated files only, maintained by this prompt and `story prompt.md`. Status is `Done` (a real file exists) or `Pending` (reserved for a résumé-extracted candidate not yet interviewed by `story prompt.md` — has no file yet, so don't try to read it); Notes holds unresolved issues for that story (contradictions, uncertain details, undefined terms). A second "Reference Files" table (File, Status) covers the reference files below — Status is `Uninitialized` (still placeholder text) or `Filled In` (edited with real information) — and this prompt is the one responsible for keeping it current, since it's the one that actually reads those files. A third "Coverage Gaps" table (Requirement, First Seen) tracks known gaps and loose ends not tied to a single dated entry — maintained by this prompt's audit.
-- **pdf/** — the committed PDF toolchain (`template.typ`, `render.sh`), set up once by `init prompt.md`, plus `pdf/output/` (gitignored scratch space) where each run's content file and preview PNGs live. See the PDF Rendering section below for how it's actually used to turn a draft into a PDF.
+  - **Dated files** (filenames beginning with a year, e.g. `2022-01_acme_corp_widget_redesign.md` or `2015_backyard_greenhouse_automation.md`) — one per job, project, or personal project, each containing the accomplishments, scope, and skills for that entry.
+  - **Reference files** (no date prefix) — `contact_info.md`, `education.md`, `skills.md`, `glossary.md`, `publications_and_presentations.md`, `amateur_training_and_experience.md`, and `résumé_preferences.md` — material that isn't tied to a single dated entry.
+  - **`index.md`** — three tables. The main one (File, Summary, Status, Notes) covers dated files only, maintained by this prompt and `story_prompt.md`. Status is `Done` (a real file exists) or `Pending` (reserved for a résumé-extracted candidate not yet interviewed by `story_prompt.md` — has no file yet, so don't try to read it); Notes holds unresolved issues for that story (contradictions, uncertain details, undefined terms). A second "Reference Files" table (File, Status) covers the reference files below — Status is `Uninitialized` (still placeholder text) or `Filled In` (edited with real information) — and this prompt is the one responsible for keeping it current, since it's the one that actually reads those files. A third "Coverage Gaps" table (Requirement, First Seen) tracks known gaps and loose ends not tied to a single dated entry — maintained by this prompt's audit.
+- **pdf/** — the committed PDF toolchain (`template.typ`, `render.sh`), set up once by `init_prompt.md`, plus `pdf/output/` (gitignored scratch space) where each run's content file and preview PNGs live. See the PDF Rendering section below for how it's actually used to turn a draft into a PDF.
 
 **Before doing anything else, make sure `posting.txt` actually holds the posting I want this résumé built for.**
 
@@ -18,15 +18,15 @@ You are working inside a git repository, not a browser chat with attached files.
 
 Don't guess or draft off an empty `posting.txt`. Once it holds real content, move on.
 
-Read `stories/Résumé Preferences.md` first. It holds how I want to be introduced and positioned, my target level, and any other personalization instructions — apply it throughout everything below, including the Leveling section. If that file doesn't exist yet, or still contains bracketed `[...]` placeholder text rather than real content, ask me for this information before drafting rather than guessing or leaving it generic.
+Read `stories/résumé_preferences.md` first. It holds how I want to be introduced and positioned, my target level, and any other personalization instructions — apply it throughout everything below, including the Leveling section. If that file doesn't exist yet, or still contains bracketed `[...]` placeholder text rather than real content, ask me for this information before drafting rather than guessing or leaving it generic.
 
-**Before reading anything else, reconcile `stories/INDEX.md` against the actual dated files.** List every dated file in `stories/` and compare against `INDEX.md`'s rows. Every dated file should have a `Done` row; every `Done` row should have a matching file; `Pending` rows shouldn't have a file yet. Flag any mismatch and ask how to resolve it (summarize an unindexed file, drop a stale row, fix a rename) before proceeding — don't draft a résumé off a stale or incomplete picture of what's actually there. If `INDEX.md` doesn't exist at all, build it from every dated file in `stories/`, all as `Done`.
+**Before reading anything else, reconcile `stories/index.md` against the actual dated files.** List every dated file in `stories/` and compare against `index.md`'s rows. Every dated file should have a `Done` row; every `Done` row should have a matching file; `Pending` rows shouldn't have a file yet. Flag any mismatch and ask how to resolve it (summarize an unindexed file, drop a stale row, fix a rename) before proceeding — don't draft a résumé off a stale or incomplete picture of what's actually there. If `index.md` doesn't exist at all, build it from every dated file in `stories/`, all as `Done`.
 
-**Also check `stories/INDEX.md`'s "Coverage Gaps" table before drafting.** If any listed gap looks relevant to this posting, tell me before you draft — a known gap that keeps coming up across postings is worth actually fixing (a new story, or expanding an existing one) rather than silently working around again. Don't block on this; just surface it and let me decide whether to pause and capture something first or proceed as-is.
+**Also check `stories/index.md`'s "Coverage Gaps" table before drafting.** If any listed gap looks relevant to this posting, tell me before you draft — a known gap that keeps coming up across postings is worth actually fixing (a new story, or expanding an existing one) rather than silently working around again. Don't block on this; just surface it and let me decide whether to pause and capture something first or proceed as-is.
 
-Read every other file in stories/ before drafting anything — only `Done` rows in `INDEX.md` correspond to real files; skip `Pending` ones. Read the dated files in reverse-chronological order — most recent first, oldest last — so the most senior and most relevant material anchors your read of the career, consistent with weighting recent experience most heavily (see Leveling, below). Read the reference files in any order.
+Read every other file in stories/ before drafting anything — only `Done` rows in `index.md` correspond to real files; skip `Pending` ones. Read the dated files in reverse-chronological order — most recent first, oldest last — so the most senior and most relevant material anchors your read of the career, consistent with weighting recent experience most heavily (see Leveling, below). Read the reference files in any order.
 
-**While reading each reference file, check whether it's still placeholder text** — bracketed `[...]` fields rather than real content — and reconcile `INDEX.md`'s "Reference Files" table against what you actually find: flip a row to `Filled In` if the file has real content but the table still says `Uninitialized`, and vice versa if a table says `Filled In` but the file is still placeholder. Don't fix this silently if it's ambiguous; when in doubt, ask. If a file relevant to this résumé (e.g. `Contact Info.md`, or `Education.md` when the posting cares about it) is still `Uninitialized`, tell me before drafting rather than inventing or omitting silently — same as the handling for `Résumé Preferences.md` above.
+**While reading each reference file, check whether it's still placeholder text** — bracketed `[...]` fields rather than real content — and reconcile `index.md`'s "Reference Files" table against what you actually find: flip a row to `Filled In` if the file has real content but the table still says `Uninitialized`, and vice versa if a table says `Filled In` but the file is still placeholder. Don't fix this silently if it's ambiguous; when in doubt, ask. If a file relevant to this résumé (e.g. `contact_info.md`, or `education.md` when the posting cares about it) is still `Uninitialized`, tell me before drafting rather than inventing or omitting silently — same as the handling for `résumé_preferences.md` above.
 
 Write a bespoke, tailored résumé for this specific job using only information drawn from my career history (the contents of stories/), then immediately run a structured self-audit before delivering anything. Deliver the résumé as a PDF file, followed by the audit report in the conversation.
 
@@ -42,7 +42,7 @@ Write a bespoke, tailored résumé for this specific job using only information 
 
 ### Leveling
 
-- Apply my target level and any title-framing instructions from `stories/Résumé Preferences.md`.
+- Apply my target level and any title-framing instructions from `stories/résumé_preferences.md`.
 - Lead with impact, scope, and ownership, not just responsibilities.
 - Quantify accomplishments wherever the career history provides specific numbers, timelines, team sizes, or measurable outcomes. Do not fabricate or estimate numbers that do not appear in the career history.
 - Prioritize 'Force Multiplier' activities. If the history mentions mentoring, code reviews, architectural RFCs, defining standards, or cross-functional coordination with hardware/PM teams, these should be included. These are the markers of Senior/Staff engineers that AI often overlooks in favor of 'I coded X feature.'
@@ -61,7 +61,7 @@ Additionally, a "skill" must be a noun, not an adjective. For example, "Cross-Fu
 
 ### Earlier, Unrelated Experience
 
-- If my career includes significant experience in an earlier discipline unrelated to the role I'm targeting now (see `stories/Résumé Preferences.md` for what I'm targeting), how much to feature it depends on the job posting.
+- If my career includes significant experience in an earlier discipline unrelated to the role I'm targeting now (see `stories/résumé_preferences.md` for what I'm targeting), how much to feature it depends on the job posting.
 - Default behavior: focus the résumé on the discipline I'm targeting now. Reference the earlier background briefly in the Summary or Skills section for credibility and systems-thinking framing, but do not include early unrelated roles as full job entries.
 - Exception: If the job posting explicitly values breadth, systems engineering, cross-discipline integration, or cross-functional experience, include more detail from these earlier roles. Use your judgment, but err toward the default.
 
@@ -70,7 +70,7 @@ Additionally, a "skill" must be a noun, not an adjective. For example, "Cross-Fu
 - Target length: two-to-three pages. This means 1000-1500 words. Aim for at least 1000 words, and up to 1500 words if the additional content is directly relevant to the job posting and meaningfully strengthens the application. Filler, redundancy, or marginal experience should be cut before adding a third page. When in doubt, cut. Greater than three pages is unacceptable.
 - Document length is measured visually against the rendered PDF, not from a "number of pages" metadata field (see PDF Rendering, below, for exactly how). If the final document is less than 1.9 pages, then too much has been cut. We will always have enough content to fill two complete pages.
 - Prefer fewer, stronger bullet points over comprehensive coverage. Three to five bullets per role is typical. More than six per role is almost certainly too many.
-- Contact information from `stories/Contact Info.md` should appear at the top of the résumé.
+- Contact information from `stories/contact_info.md` should appear at the top of the résumé.
 - Sections: Summary, Skills, Professional Experience, Education, Publications (include only if relevant to the role).
 - The Summary should be 3–4 sentences positioning me specifically for this role.
 - Professional Experience must be sorted in reverse chronological order, with the most recent role first.
@@ -85,7 +85,7 @@ Additionally, a "skill" must be a noun, not an adjective. For example, "Cross-Fu
 - Match my tone and voice as reflected in the career history. I write about my work in factual, technically specific language without hype or self-promotion. The résumé should read the same way. You may use specific phrases or terminology from the career history where they fit naturally, but do not try to preserve full sentences. Condense and restructure freely for résumé format while preserving my voice.
 - Do not use "business speak", MBA jargon, or sensational language. Banned phrases include but are not limited to: spearheaded, leveraged, synergized, drove impact, transformed, world-class, passionate about, results-driven, dynamic, and any similar filler.
 - Do not use em-dashes anywhere, ever, for any reason.
-- If the career history contains words, phrases, or acronyms that are not industry-standard or well known, ask for explanations or use definitions from `stories/Glossary.md`. Uncommon acronyms should only be used in the final résumé after they are defined in the résumé.
+- If the career history contains words, phrases, or acronyms that are not industry-standard or well known, ask for explanations or use definitions from `stories/glossary.md`. Uncommon acronyms should only be used in the final résumé after they are defined in the résumé.
 
 ### Accuracy & Integrity
 
@@ -104,7 +104,7 @@ Additionally, a "skill" must be a noun, not an adjective. For example, "Cross-Fu
 - Deliver the résumé as a clean, professional PDF file suitable for submission to an employer. Do not use color, graphics, or elaborate design elements — it should look like a traditional senior engineer's résumé.
 - The final document should be two full or three full pages. A 2.1-page résumé looks unprofessional.
 - The mechanics of actually producing the PDF — content file format, fonts, spacing, margins, and how to hit an even page count — are entirely handled by the **PDF RENDERING** section below. This section is about what the résumé says; that one is about how it's typeset. Do not improvise a different way to generate the PDF.
-- The final PDF filename (produced by Archiving, below, in `generated résumés/`) follows the format: `<Date> <Time> <My Name> Résumé - <Employer>, <Role>.pdf`, where Date and Time are today's date and local time, My Name comes from `stories/Contact Info.md`, and Employer and Role are taken from the job posting.
+- The final PDF filename (produced by Archiving, below, in `generated_résumés/`) follows the format: `<Date> <Time> <My Name> Résumé - <Employer>, <Role>.pdf`, where Date and Time are today's date and local time, My Name comes from `stories/contact_info.md`, and Employer and Role are taken from the job posting.
 
 ## PDF RENDERING
 
@@ -120,7 +120,7 @@ Confirm the toolchain exists before drafting is finalized, so a missing toolchai
 typst --version && ls pdf/template.typ pdf/render.sh
 ```
 
-If either check fails, stop and tell me to run `init prompt.md` (its PDF Toolchain Setup phase) first. Do not improvise a substitute.
+If either check fails, stop and tell me to run `init_prompt.md` (its PDF Toolchain Setup phase) first. Do not improvise a substitute.
 
 Ensure the output directory exists: `mkdir -p pdf/output`.
 
@@ -212,7 +212,7 @@ This validates the em-dash ban, compiles the PDF, and writes `...-preview-1.png`
 **Count the preview PNGs** — that is the page count. Then **view every preview PNG** with the image-viewing tool and check:
 
 1. **Length.** Estimate, to a resolution of 0.1 page, how far down the final page the content extends (e.g., text ending two-thirds down page 2 = 1.7 pages). This visual estimate is the document length used throughout this prompt, including Audit 5 below — never use PDF metadata page counts, which round up.
-2. **Appearance.** Header centered and intact; section rules present; no orphaned section header sitting alone at the bottom of a page; no single stranded bullet at the top of a page; dates right-aligned and not wrapping; nothing overlapping or clipped.
+2. **Appearance.** Header centered and intact; section rules present; no orphaned section header sitting alone at the bottom of a page; no single stranded bullet at the top of a page; dates right-aligned and not wrapping; nothing overlapping or clipped. **Check every entry individually, not just the page as a whole:** the gap between an entry's title/org/dates line and its first bullet must visually match the gap between that entry's own bullets — if the header looks crowded against the first bullet (lines nearly touching, tighter than the bullet-to-bullet spacing directly below it), that's a defect even if nothing is literally overlapping. Same check at the boundary between one entry's last bullet and the next entry's header.
 
 The target is a document that ends **within the last 0.15 page of an even page boundary**: content filling roughly 1.9–2.0 pages or 2.9–3.0 pages is acceptable; anything else needs adjustment.
 
@@ -232,11 +232,11 @@ Once the document lands within range and looks right, move on to PASS 2 — AUDI
 
 ### Troubleshooting
 
-- **`typst: command not found`** — toolchain not installed on this machine. Direct me to `init prompt.md`'s PDF Toolchain Setup phase. Do not install any substitute PDF tool.
+- **`typst: command not found`** — toolchain not installed on this machine. Direct me to `init_prompt.md`'s PDF Toolchain Setup phase. Do not install any substitute PDF tool.
 - **Compile error with a line/column position** — content problem; fix the indicated line (usually an unescaped `#`, `$`, `_`, `*`, `@`, or a bare `//` in body text — or a stray backslash inside a string argument, see the note above).
 - **`error: file not found` on the import line** — the content file isn't in `pdf/output/`, so the relative path `../template.typ` is wrong. Move the content file to `pdf/output/`; do not change the import to compensate.
 - **Render script rejects the file for an em-dash** — the grep output lists the offending lines; replace each em-dash per the style rules (usually with a comma, colon, or restructured sentence) and re-render.
-- **PNG pattern error mentioning `{p}`** — Typst is older than 0.12; it must be upgraded (see `init prompt.md`'s PDF Toolchain Setup phase). Do not work around it.
+- **PNG pattern error mentioning `{p}`** — Typst is older than 0.12; it must be upgraded (see `init_prompt.md`'s PDF Toolchain Setup phase). Do not work around it.
 - **Fonts look different than expected** — if Georgia isn't installed on this machine, output uses the bundled Libertinus Serif fallback. This is by design and acceptable; do not download or install fonts mid-run.
 
 ### Rules that override everything in this section's vicinity
@@ -270,7 +270,7 @@ For each requirement the résumé does not address, check `stories/` itself, not
 - If `stories/` actually contains material for it that simply didn't make it into this draft, that's a drafting miss, not a coverage gap — revise the résumé to include it and mark it ✓, rather than flagging it.
 - Only if `stories/` genuinely has nothing addressing it is it a real gap. Flag it with full detail.
 
-**For each real gap, also add a row to `stories/INDEX.md`'s "Coverage Gaps" table** — Requirement `[Requirement] — not found in stories/`, First Seen `[Employer] posting, [today's date]` — unless a close match is already listed there, in which case leave the existing row alone rather than duplicating it. This tracks gaps in my career history, not gaps in what one draft happened to include, which is what makes the pre-draft check at the top of this prompt useful the next time a posting wants the same thing.
+**For each real gap, also add a row to `stories/index.md`'s "Coverage Gaps" table** — Requirement `[Requirement] — not found in stories/`, First Seen `[Employer] posting, [today's date]` — unless a close match is already listed there, in which case leave the existing row alone rather than duplicating it. This tracks gaps in my career history, not gaps in what one draft happened to include, which is what makes the pre-draft check at the top of this prompt useful the next time a posting wants the same thing.
 
 ### Audit 5: Document Length
 
@@ -303,19 +303,19 @@ AUDIT REPORT
 
 ## ARCHIVING
 
-Every time a résumé is generated, save a permanent record of the posting and the résumé PDF into `generated résumés/` (create the folder if it doesn't already exist). Everything else — the `.typ` content file, preview PNGs, and any other work-in-progress artifact — stays in `pdf/output/` (gitignored scratch space) and is never copied here:
+Every time a résumé is generated, save a permanent record of the posting and the résumé PDF into `generated_résumés/` (create the folder if it doesn't already exist). Everything else — the `.typ` content file, preview PNGs, and any other work-in-progress artifact — stays in `pdf/output/` (gitignored scratch space) and is never copied here:
 
 - Compute a shared prefix once per run: `<Date> <Time>`, using today's date (`YYYY-MM-DD`) and local time in 24-hour `HHMM` format (no colons — they're unsafe in filenames), e.g. `2026-07-27 1432`. Reuse it for every file below so they stay paired.
-- Copy `posting.txt` into `generated résumés/<Date> <Time> <Employer>, <Role> posting.txt`.
-- Copy the rendered PDF from `pdf/output/<My Name> Résumé - <Employer>, <Role>.pdf` (see PDF Rendering, above) into `generated résumés/<Date> <Time> <My Name> Résumé - <Employer>, <Role>.pdf`. This dated copy is the actual deliverable — the filename given in Output Format, above — not the plain-named one sitting in `pdf/output/`.
-- After both copies are safely written, reset `posting.txt` back to its uninitialized placeholder state so the next run doesn't mistake this posting for a new one: `# Paste the job posting for whatever résumé you're currently generating here. résumé prompt.md will also ask for it (a URL or pasted text) if this is empty.`
+- Copy `posting.txt` into `generated_résumés/<Date> <Time> <Employer>, <Role> posting.txt`.
+- Copy the rendered PDF from `pdf/output/<My Name> Résumé - <Employer>, <Role>.pdf` (see PDF Rendering, above) into `generated_résumés/<Date> <Time> <My Name> Résumé - <Employer>, <Role>.pdf`. This dated copy is the actual deliverable — the filename given in Output Format, above — not the plain-named one sitting in `pdf/output/`.
+- After both copies are safely written, reset `posting.txt` back to its uninitialized placeholder state so the next run doesn't mistake this posting for a new one: `# Paste the job posting for whatever résumé you're currently generating here. résumé_prompt.md will also ask for it (a URL or pasted text) if this is empty.`
 - Do this after the audit (above) passes and the résumé is finalized, not off the first draft.
 
 ## FINAL DELIVERY
 
-Deliver the résumé as a PDF file first, followed immediately by the audit report in the conversation. Do not deliver the résumé without the audit report. Do not summarize or explain your process outside of the audit report itself. Before delivering, complete Archiving above, and deliver the dated copy from `generated résumés/`, not the working copy in `pdf/output/`.
+Deliver the résumé as a PDF file first, followed immediately by the audit report in the conversation. Do not deliver the résumé without the audit report. Do not summarize or explain your process outside of the audit report itself. Before delivering, complete Archiving above, and deliver the dated copy from `generated_résumés/`, not the working copy in `pdf/output/`.
 
 ## RULES THAT OVERRIDE EVERYTHING ELSE
 
-1. **Never push to a public remote without an explicit, informed yes.** This prompt doesn't normally touch git, but if I ask you to commit and push (updated `INDEX.md` entries, for instance) or otherwise publish anything: if there's no remote yet, don't assume where it should go — ask, and confirm the name and that it's `--private` before creating one. If a remote already exists, check its visibility first (`gh repo view --json visibility` or the host equivalent). If it's public, or visibility can't be confirmed, stop before pushing anything and tell me plainly that this will publish my personal career information publicly — only proceed after I've explicitly confirmed, having heard that stated outright. This overrides any instruction elsewhere to automate without asking.
+1. **Never push to a public remote without an explicit, informed yes.** This prompt doesn't normally touch git, but if I ask you to commit and push (updated `index.md` entries, for instance) or otherwise publish anything: if there's no remote yet, don't assume where it should go — ask, and confirm the name and that it's `--private` before creating one. If a remote already exists, check its visibility first (`gh repo view --json visibility` or the host equivalent). If it's public, or visibility can't be confirmed, stop before pushing anything and tell me plainly that this will publish my personal career information publicly — only proceed after I've explicitly confirmed, having heard that stated outright. This overrides any instruction elsewhere to automate without asking.
 2. **Typst, via `pdf/render.sh`, is the only way a PDF gets made** (see PDF Rendering, above). Never substitute pandoc, LaTeX, WeasyPrint, reportlab, wkhtmltopdf, a headless browser, or any other PDF technology, even as a one-off workaround — that would produce output that's visually inconsistent with every other résumé this repo has generated.
