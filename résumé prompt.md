@@ -14,9 +14,9 @@ You are working inside a git repository, not a browser chat with attached files.
 - **If it's missing, empty, or still just the placeholder comment from setup**, get one before proceeding:
   - **Ask for a URL first.** Most job postings live at a link, and that's less error-prone to capture than a manual paste. If given one, fetch it and extract just the job description itself — strip site navigation, header/footer boilerplate, and any unrelated postings on the same page — then write that text into `posting.txt`.
   - **Ask for a pasted copy only if there's no usable URL** — the posting was emailed, is behind a login, is a PDF or screenshot, or the fetch fails or comes back looking wrong. In that case, ask the user to paste the full text of the posting, and write it into `posting.txt` verbatim.
-- **If it already holds a real posting**, don't assume it's for this run — it's just as likely to be left over from the last résumé generated. Summarize it in one line (employer and role) and ask me to confirm whether to use that one or provide a new posting (URL or pasted text, same as above) before drafting anything.
+- **If it already holds a real posting**, that's what this run is for — the Archiving step (below) resets `posting.txt` to the placeholder after every résumé, so a populated file means it was written for this run, not left over from a prior one. Summarize it in one line (employer and role) so I can confirm at a glance, then proceed without waiting on a reply.
 
-Don't guess or draft off a stale, unconfirmed, or empty `posting.txt`. Once confirmed or newly written, move on.
+Don't guess or draft off an empty `posting.txt`. Once it holds real content, move on.
 
 Read `stories/Résumé Preferences.md` first. It holds how I want to be introduced and positioned, my target level, and any other personalization instructions — apply it throughout everything below, including the Leveling section. If that file doesn't exist yet, or still contains bracketed `[...]` placeholder text rather than real content, ask me for this information before drafting rather than guessing or leaving it generic.
 
@@ -108,7 +108,17 @@ Additionally, a "skill" must be a noun, not an adjective. For example, "Cross-Fu
 - Use 1.25x-1.5x vertical spacing between lines for readability.
 - You can adjust vertical spacing, font size, and page borders to fit the résumé to an even two or three pages.
 - Do not use color, graphics, or elaborate design elements. The PDF should look like a traditional senior engineer's résumé.
-- The PDF filename should follow the format: `<My Name> Résumé - <Employer>, <Role>.pdf`, where My Name comes from `stories/Contact Info.md` and Employer and Role are taken from the job posting.
+- The PDF filename should follow the format: `<Date> <Time> <My Name> Résumé - <Employer>, <Role>.pdf`, where Date and Time are today's date and local time (see Archiving, below), My Name comes from `stories/Contact Info.md`, and Employer and Role are taken from the job posting.
+
+### Archiving
+
+Every time a résumé is generated, save both the posting and the résumé into `generated résumés/` (create the folder if it doesn't already exist) so there's a permanent record of what was actually submitted for each application:
+
+- Use a shared filename prefix of `<Date> <Time>` for both files, using today's date (`YYYY-MM-DD`) and the local time in 24-hour `HHMM` format (no colons — they're unsafe in filenames), e.g. `2026-07-27 1432`. Compute this once per run and reuse it for both files so they stay paired.
+- Copy `posting.txt` into `generated résumés/<Date> <Time> <Employer>, <Role> posting.txt`.
+- Save the résumé PDF into `generated résumés/` using the filename format given above (which already includes the same `<Date> <Time>` prefix), not just at the top level of the repo.
+- After both copies are safely written, reset `posting.txt` back to its uninitialized placeholder state so the next run doesn't mistake this posting for a new one: `# Paste the job posting for whatever résumé you're currently generating here. résumé prompt.md will also ask for it (a URL or pasted text) if this is empty.`
+- Do this after the audit passes and the résumé is finalized, not off the first draft.
 
 ## PASS 2 — AUDIT
 
@@ -163,7 +173,7 @@ AUDIT REPORT
 
 ## FINAL DELIVERY
 
-Deliver the résumé as a PDF file first, followed immediately by the audit report in the conversation. Do not deliver the résumé without the audit report. Do not summarize or explain your process outside of the audit report itself.
+Deliver the résumé as a PDF file first, followed immediately by the audit report in the conversation. Do not deliver the résumé without the audit report. Do not summarize or explain your process outside of the audit report itself. Before delivering, complete the Archiving step above so the posting and the final résumé are both saved into `generated résumés/`.
 
 ## RULE THAT OVERRIDES EVERYTHING ELSE
 
