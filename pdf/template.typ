@@ -35,27 +35,33 @@
 }
 
 // Section header: bold uppercase title with a thin rule beneath.
+//
+// Note: spacing here is intentionally NOT `weak: true`. Typst collapses weak
+// spacing to zero when it sits between two non-breakable `block()` elements
+// (as title/org/dates and section-header blocks are), so weak v() silently
+// vanished instead of producing a gap. Resolved (non-weak) v() is required.
 #let section(title) = {
-  v(0.9em, weak: true)
+  v(1em)
   block(breakable: false)[
     #text(size: 1.05em, weight: "bold", tracking: 0.03em)[#upper(title)]
     #v(-0.55em)
     #line(length: 100%, stroke: 0.6pt)
   ]
-  v(0.35em, weak: true)
+  v(0.45em)
 }
 
 // One job, project, or education entry.
 // Usage: #entry("Title", "Organization", "2021 - Present")[ ...bullets... ]
 // Pass an empty body for entries with no bullets: #entry(...)[]
+// See the note on section() above re: why this spacing is not `weak: true`.
 #let entry(title, org, dates, body) = {
-  v(0.55em, weak: true)
+  v(0.6em)
   block(breakable: false, grid(
     columns: (1fr, auto),
     column-gutter: 1em,
     [*#title*, #org],
     text(size: 0.95em)[#dates],
   ))
-  v(0.4em, weak: true)
+  v(0.4em)
   body
 }

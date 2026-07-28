@@ -309,6 +309,7 @@ Every time a résumé is generated, save a permanent record of the posting and t
 - Copy `posting.txt` into `generated_résumés/<Date> <Time> <Employer>, <Role> posting.txt`.
 - Copy the rendered PDF from `pdf/output/<My Name> Résumé - <Employer>, <Role>.pdf` (see PDF Rendering, above) into `generated_résumés/<Date> <Time> <My Name> Résumé - <Employer>, <Role>.pdf`. This dated copy is the actual deliverable — the filename given in Output Format, above — not the plain-named one sitting in `pdf/output/`.
 - After both copies are safely written, reset `posting.txt` back to its uninitialized placeholder state so the next run doesn't mistake this posting for a new one: `# Paste the job posting for whatever résumé you're currently generating here. résumé_prompt.md will also ask for it (a URL or pasted text) if this is empty.`
+- Then clear `pdf/output/` (e.g. `rm -f pdf/output/*`) — the `.typ` content file, PDF, and preview PNGs it holds are all scratch work now preserved permanently in `generated_résumés/`, and clearing it keeps the next run's artifacts from being mixed up with this one's.
 - Do this after the audit (above) passes and the résumé is finalized, not off the first draft.
 
 ## FINAL DELIVERY
