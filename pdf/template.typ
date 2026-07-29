@@ -21,13 +21,17 @@
     font: ("Georgia", "Noto Serif", "Libertinus Serif"),
     size: font-size,
   )
-  set par(leading: leading, justify: false)
-  set list(marker: [•], indent: 0.5em, body-indent: 0.5em, spacing: leading)
+  // `leading` governs line height within a paragraph or bullet (wrapped
+  // lines). New paragraphs (e.g. Skills category lines) and new list items
+  // (bullets) get 1.15x that, so a new line/bullet reads as a distinct unit
+  // rather than just another wrapped line.
+  set par(leading: leading, spacing: leading * 1.15, justify: false)
+  set list(marker: [•], indent: 0.5em, body-indent: 0.5em, spacing: leading * 1.15)
 
   // Header: name centered, contact info on one line beneath it.
   align(center)[
     #text(size: font-size * 1.7, weight: "bold")[#name]
-    #v(0.35em, weak: true)
+    #v(0.45em)
     #text(size: font-size * 0.95)[#contact-line]
   ]
   v(0.6em)
@@ -41,13 +45,13 @@
 // (as title/org/dates and section-header blocks are), so weak v() silently
 // vanished instead of producing a gap. Resolved (non-weak) v() is required.
 #let section(title) = {
-  v(1em)
+  v(0.5em)
   block(breakable: false)[
     #text(size: 1.05em, weight: "bold", tracking: 0.03em)[#upper(title)]
     #v(-0.55em)
     #line(length: 100%, stroke: 0.6pt)
   ]
-  v(0.45em)
+  v(0.225em)
 }
 
 // One job, project, or education entry.

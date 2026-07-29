@@ -71,8 +71,8 @@ Additionally, a "skill" must be a noun, not an adjective. For example, "Cross-Fu
 - Document length is measured visually against the rendered PDF, not from a "number of pages" metadata field (see PDF Rendering, below, for exactly how). If the final document is less than 1.9 pages, then too much has been cut. We will always have enough content to fill two complete pages.
 - Prefer fewer, stronger bullet points over comprehensive coverage. Three to five bullets per role is typical. More than six per role is almost certainly too many.
 - Contact information from `stories/contact_info.md` should appear at the top of the résumé.
-- Sections: Summary, Skills, Professional Experience, Education, Publications (include only if relevant to the role).
-- The Summary should be 3–4 sentences positioning me specifically for this role.
+- Sections: Summary, Professional Experience, Skills, Education, Publications (include only if relevant to the role).
+- The Summary should be 3–4 sentences positioning me specifically for this role, and must never render longer than four or five lines in the final PDF (see Step 4 below) — cut it down if it runs longer, regardless of sentence count.
 - Professional Experience must be sorted in reverse chronological order, with the most recent role first.
 - For each job, include only the projects and accomplishments most relevant to this application. Do not attempt to include everything.
 - Bullet points under each role should be achievement-oriented: what I built, what problem it solved, and what the outcome was.
@@ -149,11 +149,6 @@ The content file must follow this structure exactly — same import, same `#show
 Three to four sentences positioning the candidate for this specific role,
 written per the drafting instructions.
 
-#section("Skills")
-*Embedded Systems:* high-performance BLDC motor control, real-time firmware \
-*Protocols:* SPI, RS485, UART, CAN, LIN \
-*Process:* code review, architectural RFCs, cross-functional planning
-
 #section("Professional Experience")
 #entry("Senior Firmware Engineer", "Acme Robotics", "2021 - Present")[
   - Achievement-oriented bullet: what was built, what problem it solved, outcome.
@@ -163,6 +158,13 @@ written per the drafting instructions.
 #entry("Firmware Engineer", "Widget Corp", "2017 - 2021")[
   - Bullets for this role.
 ]
+
+#section("Skills")
+*Embedded Systems:* high-performance BLDC motor control, real-time firmware
+
+*Protocols:* SPI, RS485, UART, CAN, LIN
+
+*Process:* code review, architectural RFCs, cross-functional planning
 
 #section("Education")
 #entry("M.S. Mechanical Engineering", "State University", "2014")[]
@@ -175,7 +177,7 @@ Notes on the helpers:
 
 - `#section("Title")` renders an uppercase header with a rule. Pass the title in normal case; the template uppercases it.
 - `#entry(title, org, dates)[body]` puts title and organization on the left (separated by a comma — the template deliberately does not use a dash there) and dates on the right. For entries with no bullets (most Education lines), pass an empty body: `#entry(...)[]`.
-- In the Skills section, end each line with ` \` (space, backslash) to force a line break; a blank line would start a new paragraph with extra spacing.
+- In the Skills section, separate each category with a blank line so it becomes its own paragraph — the template gives paragraph breaks slightly more space than a wrapped line within one, which is what sets one category off from the next. Do not use a trailing ` \` line break here.
 - Date ranges use a plain hyphen with spaces (`2021 - Present`). Never an em-dash — the render script mechanically rejects any file containing one, anywhere in the file (including comments).
 
 **`name` and `contact-line` in `resume.with(...)`, and `title`/`org`/`dates` in `entry(...)`, are plain Typst strings — not markup.** Write them literally, with no backslash-escaping: `jane.doe@example.com` is correct, `jane.doe\@example.com` renders a literal, wrong backslash in the output (verified before this instruction was written). The escaping table below applies only to markup body text — section paragraphs and the bracketed `[...]` bullet lists passed to `#entry(...)`.
