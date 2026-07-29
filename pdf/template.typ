@@ -8,6 +8,11 @@
 //   leading:    0.65em – 1.0em   (default 0.75em; approx 1.2x–1.5x line spacing)
 //   margin:     1.4cm – 2.0cm per side (default x: 1.7cm, y: 1.6cm)
 
+// Space between any heading (section or entry) and the content that follows
+// it. Shared so a section heading and an item heading read with the same
+// rhythm rather than two independently-tuned magic numbers.
+#let heading-gap = 0.4em
+
 #let resume(
   name: "",
   contact-line: "",
@@ -27,7 +32,7 @@
   // Header: name centered, contact info on one line beneath it.
   align(center)[
     #text(size: font-size * 1.7, weight: "bold")[#name]
-    #v(0.4375em)
+    #v(0.4em)
     #text(size: font-size * 0.95)[#contact-line]
   ]
   v(0.6em)
@@ -47,7 +52,7 @@
     #v(-0.55em)
     #line(length: 100%, stroke: 0.6pt)
   ]
-  v(0.45em)
+  v(heading-gap)
 }
 
 // One job, project, or education entry.
@@ -55,13 +60,13 @@
 // Pass an empty body for entries with no bullets: #entry(...)[]
 // See the note on section() above re: why this spacing is not `weak: true`.
 #let entry(title, org, dates, body) = {
-  v(0.8em)
+  v(0.55em)
   block(breakable: false, grid(
     columns: (1fr, auto),
     column-gutter: 1em,
     [*#title*, #org],
     text(size: 0.95em)[#dates],
   ))
-  v(0.4em)
+  v(heading-gap)
   body
 }
