@@ -27,7 +27,7 @@
   // Header: name centered, contact info on one line beneath it.
   align(center)[
     #text(size: font-size * 1.7, weight: "bold")[#name]
-    #v(0.7em)
+    #v(0.4375em)
     #text(size: font-size * 0.95)[#contact-line]
   ]
   v(0.6em)
@@ -62,6 +62,6 @@
     [*#title*, #org],
     text(size: 0.95em)[#dates],
   ))
-  v(0.65em)
+  v(0.4em)
   body
 }
